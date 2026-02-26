@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:dtos="clr-namespace:CatDex.Models.DTOs"
+             xmlns:viewmodels="clr-namespace:CatDex.ViewModels"
+             x:Class="CatDex.Views.DiscoverPage"
+             x:DataType="viewmodels:CatViewModel"
+             Title="DiscoverPage">
+    <Grid RowDefinitions="Auto, *">
+
+        <Label Grid.Row="0"
+               Text="Discover Page"
+               VerticalOptions="Center" 
+               HorizontalOptions="Center" 
+               Padding="10"/>
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Cats}"
+                        RemainingItemsThreshold="5"
+                        RemainingItemsThresholdReachedCommand="{Binding LoadMoreCatsCommand}">
+
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" 
+                                   SnapPointsType="MandatorySingle" 
+                                   SnapPointsAlignment="Start" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dtos:CatDTO">
+                    <Grid HeightRequest="800">
+                        <Image Source="{Binding Url}" Aspect="AspectFill" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+    </Grid>
+</ContentPage>
