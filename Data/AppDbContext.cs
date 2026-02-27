@@ -8,6 +8,11 @@ namespace CatDex.Data {
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {
             SQLitePCL.Batteries_V2.Init();
+
+        #if DEBUG
+            Database.EnsureDeleted();
+        #endif
+
             Database.EnsureCreated();
         }
 

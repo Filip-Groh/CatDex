@@ -15,6 +15,8 @@ namespace CatDex.Models {
 
         public ImageData? StoredImage { get; set; }
 
+        public DateTime? InvalidationDate { get; set; }
+
         public ICollection<Breed> Breeds { get; set; } = new List<Breed>();
     }
 }
