@@ -11,6 +11,7 @@ namespace CatDex.ViewModels {
         private int _currentPage = 0;
 
         public ObservableCollection<CatDTO> Cats { get; } = new();
+        public Dictionary<string, bool> StoredCatsFavoriteStatus { get; } = new();
 
         [ObservableProperty]
         public partial bool IsBusy { get; set; }
@@ -35,10 +36,16 @@ namespace CatDex.ViewModels {
                 var newCats = await _repository.GetNewCatsAsync(page: _currentPage, limit: 10);
 
                 if (newCats.Count > 0) {
-                    foreach (var cat in newCats) { 
+                    var storedCats = await _repository.GetStoredCatsAsync();
+
+                    foreach (var storedCat in storedCats) {
+                        StoredCatsFavoriteStatus[storedCat.Id] = storedCat.IsFavorite;
+                    }
+
+                    foreach (var cat in newCats) {
                         Cats.Add(cat);
                     }
-                        
+
                     _currentPage++;
                 }
             } finally {
@@ -49,7 +56,34 @@ namespace CatDex.ViewModels {
         public async Task OnCatSelected() {
             Debug.WriteLine(SelectedCat?.Url);
             if (SelectedCat != null) {
-                await _repository.StoreCatAsync(SelectedCat.Id);
+                var storedCat = await _repository.StoreCatAsync(SelectedCat.Id);
+                StoredCatsFavoriteStatus[storedCat.Id] = storedCat.IsFavorite;
+                OnPropertyChanged(nameof(StoredCatsFavoriteStatus));
+            }
+        }
+
+        public bool IsCatStored(string catId) {
+            return StoredCatsFavoriteStatus.ContainsKey(catId);
+        }
+
+        public bool GetCatFavoriteStatus(string catId) {
+            return StoredCatsFavoriteStatus.TryGetValue(catId, out var isFavorite) && isFavorite;
+        }
+
+        [RelayCommand]
+        async Task ToggleFavorite(CatDTO cat) {
+            if (cat == null || !IsCatStored(cat.Id))
+                return;
+
+            try {
+                var currentStatus = GetCatFavoriteStatus(cat.Id);
+                var newIsFavorite = !currentStatus;
+                await _repository.SetCatIsFavorite(cat.Id, newIsFavorite);
+
+                StoredCatsFavoriteStatus[cat.Id] = newIsFavorite;
+                OnPropertyChanged(nameof(StoredCatsFavoriteStatus));
+            } catch (Exception ex) {
+                Debug.WriteLine($"Error toggling favorite: {ex.Message}");
             }
         }
     }

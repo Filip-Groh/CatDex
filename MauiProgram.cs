@@ -38,6 +38,7 @@ namespace CatDex {
 
             builder.Services.AddSingleton<CreatePage>();
 
+            builder.Services.AddSingleton<FavoriteViewModel>();
             builder.Services.AddSingleton<FavoritePage>();
 
             builder.Services.AddSingleton<SettingsPage>();

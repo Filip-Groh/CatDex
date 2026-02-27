@@ -76,6 +76,16 @@ namespace CatDex.Services {
             return await cats.ToArrayAsync();
         }
 
+        public async Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId = null) {
+            var cats = _db.Cats.AsNoTracking().Include(cat => cat.Breeds).AsQueryable().Where(cat => cat.IsFavorite);
+
+            if (!string.IsNullOrEmpty(breedId)) {
+                cats = cats.Where(cat => cat.Breeds.Any(breed => breed.Id == breedId));
+            }
+
+            return await cats.ToArrayAsync();
+        }
+
         public async Task<Cat> CreateCatAsync(DetailedCatDTO cat) {
             var createdCat = new Cat {
                 Id = cat.Id,
@@ -136,6 +146,22 @@ namespace CatDex.Services {
             
             _db.Entry(existingCat).State = EntityState.Detached;
             
+            return existingCat;
+        }
+
+        public async Task<Cat> SetCatIsFavorite(string id, bool isFavorite) {
+            var existingCat = await _db.Cats.FindAsync(id);
+
+            if (existingCat == null) {
+                throw new InvalidOperationException($"Breed with ID {id} not found.");
+            }
+
+            existingCat.IsFavorite = isFavorite;
+
+            await _db.SaveChangesAsync();
+
+            _db.Entry(existingCat).State = EntityState.Detached;
+
             return existingCat;
         }
     }

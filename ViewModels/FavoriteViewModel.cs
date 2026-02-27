@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 
 namespace CatDex.ViewModels {
-    public partial class SearchViewModel : ObservableObject {
+    public partial class FavoriteViewModel : ObservableObject {
         private readonly ICatRepositoryService _catRepositoryService;
 
         public ObservableCollection<Cat> Cats { get; } = new();
@@ -16,7 +16,7 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial bool IsRefreshing { get; set; }
 
-        public SearchViewModel(ICatRepositoryService catRepositoryService) {
+        public FavoriteViewModel(ICatRepositoryService catRepositoryService) {
             _catRepositoryService = catRepositoryService;
 
             Task.Run(async () => await LoadCatsAsync());
@@ -29,7 +29,7 @@ namespace CatDex.ViewModels {
             try {
                 IsBusy = true;
 
-                var cats = await _catRepositoryService.GetStoredCatsAsync();
+                var cats = await _catRepositoryService.GetFavoriteCatsAsync();
 
                 Cats.Clear();
                 foreach (var cat in cats) {

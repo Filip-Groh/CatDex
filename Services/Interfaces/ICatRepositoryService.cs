@@ -8,7 +8,9 @@ namespace CatDex.Services.Interfaces {
 
         public Task<ICollection<CatDTO>> GetNewCatsAsync(int page = 0, int limit = 10);
         public Task<ICollection<Cat>> GetStoredCatsAsync(string? breedId = null);
+        public Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId = null);
         public Task<Cat> StoreCatAsync(string id);
         public Task<Cat> DeleteCatAsync(string id);
+        public Task<Cat> SetCatIsFavorite(string id, bool isFavorite);
     }
 }

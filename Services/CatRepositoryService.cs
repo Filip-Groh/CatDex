@@ -79,6 +79,25 @@ namespace CatDex.Services {
             return updatedCats;
         }
 
+        public async Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId = null) {
+            await GetBreedsAsync(); // Ensure breeds are up to date before fetching cats
+
+            var cats = await _data.GetFavoriteCatsAsync(breedId);
+
+            var updatedCats = await Task.WhenAll(cats.Select(async cat => {
+                if (cat.InvalidationDate < DateTime.Now) {
+                    var fetchedCat = await _api.GetCatAsync(cat.Id);
+                    if (fetchedCat != null) {
+                        return await _data.UpdateCatAsync(cat.Id, fetchedCat);
+                    }
+                }
+
+                return cat;
+            }));
+
+            return updatedCats;
+        }
+
         public async Task<Cat> StoreCatAsync(string id) {
             var cat = await _data.GetCatAsync(id);
             
@@ -97,6 +116,10 @@ namespace CatDex.Services {
 
         public async Task<Cat> DeleteCatAsync(string id) {           
             return await _data.DeleteCatAsync(id);
+        }
+
+        public async Task<Cat> SetCatIsFavorite(string id, bool isFavorite) {
+            return await _data.SetCatIsFavorite(id, isFavorite);
         }
     }
 }

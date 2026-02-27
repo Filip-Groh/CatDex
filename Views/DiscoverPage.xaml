@@ -31,10 +31,40 @@
                         HorizontalOptions="Fill" 
                         VerticalOptions="Fill" />
 
+                    
+
                     <VerticalStackLayout 
                         VerticalOptions="End" 
                         Padding="20">
-                        <Label Text="{Binding Id, StringFormat='Cat ID: {0}'}" TextColor="White" FontSize="18" />
+                        <HorizontalStackLayout
+                            HorizontalOptions="Center">
+                            <Label Text="{Binding Id, StringFormat='Cat ID: {0}'}" TextColor="White" FontSize="18" />
+                            <Button
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CatDiscoveryViewModel}}, Path=ToggleFavoriteCommand}"
+                                CommandParameter="{Binding .}"
+                                WidthRequest="60"
+                                HeightRequest="60"
+                                CornerRadius="30"
+                                BackgroundColor="#80000000"
+                                TextColor="White"
+                                FontSize="24"
+                                HorizontalOptions="End"
+                                VerticalOptions="Start"
+                                Margin="20">
+                                <Button.Text>
+                                    <MultiBinding Converter="{StaticResource CatFavoriteStatusConverter}">
+                                        <Binding Path="." />
+                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:CatDiscoveryViewModel}}" />
+                                    </MultiBinding>
+                                </Button.Text>
+                                <Button.IsVisible>
+                                    <MultiBinding Converter="{StaticResource CatIsStoredConverter}">
+                                        <Binding Path="." />
+                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:CatDiscoveryViewModel}}" />
+                                    </MultiBinding>
+                                </Button.IsVisible>
+                            </Button>
+                        </HorizontalStackLayout>
                     </VerticalStackLayout>
                 </Grid>
             </DataTemplate>
