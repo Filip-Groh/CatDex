@@ -29,7 +29,8 @@
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Cat">
-                        <controls:CatCard ToggleFavoriteCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FavoriteViewModel}}, Path=ToggleFavoriteCommand}"/>
+                        <controls:CatCard ToggleFavoriteCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FavoriteViewModel}}, Path=ToggleFavoriteCommand}"
+                                          TappedCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FavoriteViewModel}}, Path=NavigateToCatDetailsCommand}"/>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
 

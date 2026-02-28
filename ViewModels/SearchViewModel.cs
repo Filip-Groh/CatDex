@@ -63,5 +63,13 @@ namespace CatDex.ViewModels {
                 System.Diagnostics.Debug.WriteLine($"Error toggling favorite: {ex.Message}");
             }
         }
+
+        [RelayCommand]
+        async Task NavigateToCatDetails(Cat cat) {
+            if (cat == null)
+                return;
+
+            await Shell.Current.GoToAsync($"{nameof(Views.CatDetailsPage)}?CatId={cat.Id}");
+        }
     }
 }

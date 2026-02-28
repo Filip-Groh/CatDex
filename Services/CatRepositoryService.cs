@@ -60,6 +60,36 @@ namespace CatDex.Services {
             return _api.GetCatsAsync(page, limit);
         }
 
+        public async Task<Cat?> GetCatByIdAsync(string id) {
+            await GetBreedsAsync(); // Ensure breeds are up to date
+
+            var cat = await _data.GetCatAsync(id);
+
+            if (cat != null) {
+                // Custom cats have no InvalidationDate (null), so they should always be returned as-is
+                if (cat.InvalidationDate == null) {
+                    return cat;
+                }
+
+                // For API cats, check if they're still valid
+                if (cat.InvalidationDate >= DateTime.Now) {
+                    return cat;
+                }
+            }
+
+            var fetchedCat = await _api.GetCatAsync(id);
+
+            if (fetchedCat == null) {
+                return cat;
+            }
+
+            if (cat?.InvalidationDate < DateTime.Now) {
+                return await _data.UpdateCatAsync(id, fetchedCat);
+            } else {
+                return await _data.StoreCatAsync(fetchedCat);
+            }
+        }
+
         public async Task<ICollection<Cat>> GetStoredCatsAsync(string? breedId = null) {
             await GetBreedsAsync(); // Ensure breeds are up to date before fetching cats
 
@@ -85,7 +115,8 @@ namespace CatDex.Services {
             var cats = await _data.GetFavoriteCatsAsync(breedId);
 
             var updatedCats = await Task.WhenAll(cats.Select(async cat => {
-                if (cat.InvalidationDate < DateTime.Now) {
+                // Skip update for custom cats (InvalidationDate == null)
+                if (cat.InvalidationDate != null && cat.InvalidationDate < DateTime.Now) {
                     var fetchedCat = await _api.GetCatAsync(cat.Id);
                     if (fetchedCat != null) {
                         return await _data.UpdateCatAsync(cat.Id, fetchedCat);
@@ -100,13 +131,21 @@ namespace CatDex.Services {
 
         public async Task<Cat> StoreCatAsync(string id) {
             var cat = await _data.GetCatAsync(id);
-            
-            if (cat != null && cat.InvalidationDate >= DateTime.Now) {
-                return cat;
+
+            if (cat != null) {
+                // Custom cats have no InvalidationDate (null), so they should always be returned as-is
+                if (cat.InvalidationDate == null) {
+                    return cat;
+                }
+
+                // For API cats, check if they're still valid
+                if (cat.InvalidationDate >= DateTime.Now) {
+                    return cat;
+                }
             }
-            
+
             var fetchedCat = await _api.GetCatAsync(id) ?? throw new Exception($"Cat with id {id} not found in API.");
-            
+
             if (cat?.InvalidationDate < DateTime.Now) {
                 return await _data.UpdateCatAsync(id, fetchedCat);
             } else {

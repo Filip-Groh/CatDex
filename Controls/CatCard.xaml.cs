@@ -13,6 +13,15 @@ public partial class CatCard : ContentView
         set => SetValue(ToggleFavoriteCommandProperty, value);
     }
 
+    public static readonly BindableProperty TappedCommandProperty =
+        BindableProperty.Create(nameof(TappedCommand), typeof(ICommand), typeof(CatCard));
+
+    public ICommand TappedCommand
+    {
+        get => (ICommand)GetValue(TappedCommandProperty);
+        set => SetValue(TappedCommandProperty, value);
+    }
+
     public CatCard()
     {
         InitializeComponent();

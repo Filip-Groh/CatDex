@@ -11,6 +11,10 @@
                Padding="0"
                HasShadow="True">
             <Grid RowDefinitions="*,Auto">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Source={x:Reference this}, Path=TappedCommand}"
+                                          CommandParameter="{Binding .}"/>
+                </Grid.GestureRecognizers>
                 <controls:WebDBImage Url="{Binding Url}" 
                                      ImageData="{Binding StoredImage}"
                                      HeightRequest="200"

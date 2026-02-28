@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CatDex.ViewModels"
+             xmlns:models="clr-namespace:CatDex.Models"
+             xmlns:controls="clr-namespace:CatDex.Controls"
+             x:Class="CatDex.Views.CatDetailsPage"
+             x:DataType="viewmodels:CatDetailsViewModel"
+             Title="Cat Details">
+
+    <Grid>
+        <ActivityIndicator IsRunning="{Binding IsLoading}"
+                           IsVisible="{Binding IsLoading}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+
+        <ScrollView IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}">
+            <VerticalStackLayout Padding="16" Spacing="16">
+                <Frame CornerRadius="8" 
+                       Padding="0"
+                       HasShadow="True">
+                    <Grid>
+                        <controls:WebDBImage Url="{Binding Cat.Url}" 
+                                             ImageData="{Binding Cat.StoredImage}"
+                                             HeightRequest="400"/>
+
+                        <Button
+                            Command="{Binding ToggleFavoriteCommand}"
+                            WidthRequest="50"
+                            HeightRequest="50"
+                            CornerRadius="25"
+                            BackgroundColor="#80000000"
+                            Text="{Binding Cat.IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"
+                            TextColor="White"
+                            FontSize="24"
+                            HorizontalOptions="End"
+                            VerticalOptions="Start"
+                            Margin="12"/>
+                    </Grid>
+                </Frame>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Information" 
+                           FontSize="20" 
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="Auto,*" 
+                          RowDefinitions="Auto,Auto,Auto"
+                          ColumnSpacing="12"
+                          RowSpacing="8">
+                        
+                        <Label Text="ID:" 
+                               FontAttributes="Bold" 
+                               Grid.Row="0" 
+                               Grid.Column="0"/>
+                        <Label Text="{Binding Cat.Id}" 
+                               Grid.Row="0" 
+                               Grid.Column="1"/>
+
+                        <Label Text="Dimensions:" 
+                               FontAttributes="Bold" 
+                               Grid.Row="1" 
+                               Grid.Column="0"/>
+                        <Label Grid.Row="1" Grid.Column="1">
+                            <Label.Text>
+                                <MultiBinding StringFormat="{}{0} x {1}">
+                                    <Binding Path="Cat.Width"/>
+                                    <Binding Path="Cat.Height"/>
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+
+                        <Label Text="Favorite:" 
+                               FontAttributes="Bold" 
+                               Grid.Row="2" 
+                               Grid.Column="0"/>
+                        <Label Text="{Binding Cat.IsFavorite, Converter={StaticResource BoolToYesNoConverter}}" 
+                               Grid.Row="2" 
+                               Grid.Column="1"/>
+                    </Grid>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="8" 
+                                     IsVisible="{Binding Cat.Breeds.Count, Converter={StaticResource CountToVisibilityConverter}}">
+                    <Label Text="Breeds" 
+                           FontSize="20" 
+                           FontAttributes="Bold"/>
+
+                    <CollectionView ItemsSource="{Binding Cat.Breeds}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Breed">
+                                <Frame Margin="0,4" 
+                                       Padding="12"
+                                       CornerRadius="8"
+                                       BackgroundColor="#F0F0F0">
+                                    <VerticalStackLayout Spacing="8">
+                                        <Label Text="{Binding Name}" 
+                                               FontSize="18" 
+                                               FontAttributes="Bold"/>
+
+                                        <Label Text="{Binding Description}" 
+                                               FontSize="14"
+                                               LineBreakMode="WordWrap"/>
+
+                                        <!-- Basic Information -->
+                                        <BoxView HeightRequest="1" 
+                                                 BackgroundColor="LightGray" 
+                                                 Margin="0,4"/>
+
+                                        <Grid ColumnDefinitions="Auto,*" 
+                                              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                                              ColumnSpacing="12"
+                                              RowSpacing="4">
+
+                                            <Label Text="Origin:" 
+                                                   FontAttributes="Bold" 
+                                                   FontSize="12"
+                                                   Grid.Row="0" 
+                                                   Grid.Column="0"/>
+                                            <Label Text="{Binding Origin}" 
+                                                   FontSize="12"
+                                                   Grid.Row="0" 
+                                                   Grid.Column="1"/>
+
+                                            <Label Text="Temperament:" 
+                                                   FontAttributes="Bold" 
+                                                   FontSize="12"
+                                                   Grid.Row="1" 
+                                                   Grid.Column="0"/>
+                                            <Label Text="{Binding Temperament}" 
+                                                   FontSize="12"
+                                                   LineBreakMode="WordWrap"
+                                                   Grid.Row="1" 
+                                                   Grid.Column="1"/>
+
+                                            <Label Text="Life Span:" 
+                                                   FontAttributes="Bold" 
+                                                   FontSize="12"
+                                                   Grid.Row="2" 
+                                                   Grid.Column="0"/>
+                                            <Label FontSize="12"
+                                                   Grid.Row="2" 
+                                                   Grid.Column="1">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="{}{0} years">
+                                                        <Binding Path="LifeSpan"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label Text="Weight:" 
+                                                   FontAttributes="Bold" 
+                                                   FontSize="12"
+                                                   Grid.Row="3" 
+                                                   Grid.Column="0"/>
+                                            <Label FontSize="12"
+                                                   Grid.Row="3" 
+                                                   Grid.Column="1">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="{}{0} lbs ({1} kg)">
+                                                        <Binding Path="WeightImperial"/>
+                                                        <Binding Path="WeightMetric"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label Text="Alt Names:" 
+                                                   FontAttributes="Bold" 
+                                                   FontSize="12"
+                                                   Grid.Row="4" 
+                                                   Grid.Column="0"
+                                                   IsVisible="{Binding AltNames, Converter={StaticResource StringNotEmptyConverter}}"/>
+                                            <Label Text="{Binding AltNames}" 
+                                                   FontSize="12"
+                                                   LineBreakMode="WordWrap"
+                                                   Grid.Row="4" 
+                                                   Grid.Column="1"
+                                                   IsVisible="{Binding AltNames, Converter={StaticResource StringNotEmptyConverter}}"/>
+
+                                            <Label Text="Breed Group:" 
+                                                   FontAttributes="Bold" 
+                                                   FontSize="12"
+                                                   Grid.Row="5" 
+                                                   Grid.Column="0"
+                                                   IsVisible="{Binding BreedGroup, Converter={StaticResource StringNotEmptyConverter}}"/>
+                                            <Label Text="{Binding BreedGroup}" 
+                                                   FontSize="12"
+                                                   Grid.Row="5" 
+                                                   Grid.Column="1"
+                                                   IsVisible="{Binding BreedGroup, Converter={StaticResource StringNotEmptyConverter}}"/>
+                                        </Grid>
+
+                                        <!-- Personality Traits -->
+                                        <BoxView HeightRequest="1" 
+                                                 BackgroundColor="LightGray" 
+                                                 Margin="0,4"/>
+
+                                        <Label Text="Personality Traits" 
+                                               FontSize="14" 
+                                               FontAttributes="Bold"/>
+
+                                        <Grid ColumnDefinitions="*,*" 
+                                              RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                                              ColumnSpacing="8"
+                                              RowSpacing="2">
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="0" 
+                                                   Grid.Column="0">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Adaptability: {0}/5">
+                                                        <Binding Path="Adaptability"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="0" 
+                                                   Grid.Column="1">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Affection: {0}/5">
+                                                        <Binding Path="AffectionLevel"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="1" 
+                                                   Grid.Column="0">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Child Friendly: {0}/5">
+                                                        <Binding Path="ChildFriendly"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="1" 
+                                                   Grid.Column="1">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Dog Friendly: {0}/5">
+                                                        <Binding Path="DogFriendly"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="2" 
+                                                   Grid.Column="0"
+                                                   IsVisible="{Binding CatFriendly, Converter={StaticResource NullableIntToVisibilityConverter}}">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Cat Friendly: {0}/5">
+                                                        <Binding Path="CatFriendly"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="2" 
+                                                   Grid.Column="1">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Energy Level: {0}/5">
+                                                        <Binding Path="EnergyLevel"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="3" 
+                                                   Grid.Column="0">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Intelligence: {0}/5">
+                                                        <Binding Path="Intelligence"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="3" 
+                                                   Grid.Column="1">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Social Needs: {0}/5">
+                                                        <Binding Path="SocialNeeds"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="4" 
+                                                   Grid.Column="0">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Stranger Friendly: {0}/5">
+                                                        <Binding Path="StrangerFriendly"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="4" 
+                                                   Grid.Column="1">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Vocalisation: {0}/5">
+                                                        <Binding Path="Vocalisation"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="5" 
+                                                   Grid.Column="0">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Grooming: {0}/5">
+                                                        <Binding Path="Grooming"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="5" 
+                                                   Grid.Column="1">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Shedding: {0}/5">
+                                                        <Binding Path="SheddingLevel"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="6" 
+                                                   Grid.Column="0">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Health Issues: {0}/5">
+                                                        <Binding Path="HealthIssues"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+
+                                            <Label FontSize="11" 
+                                                   Grid.Row="6" 
+                                                   Grid.Column="1"
+                                                   IsVisible="{Binding Bidability, Converter={StaticResource NullableIntToVisibilityConverter}}">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="Bidability: {0}/5">
+                                                        <Binding Path="Bidability"/>
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+                                        </Grid>
+
+                                        <!-- Characteristics -->
+                                        <BoxView HeightRequest="1" 
+                                                 BackgroundColor="LightGray" 
+                                                 Margin="0,4"/>
+
+                                        <Label Text="Characteristics" 
+                                               FontSize="14" 
+                                               FontAttributes="Bold"/>
+
+                                        <FlexLayout Wrap="Wrap" 
+                                                    AlignItems="Start"
+                                                    JustifyContent="Start">
+                                            <Frame Padding="6,3" 
+                                                   CornerRadius="12" 
+                                                   BackgroundColor="#E3F2FD"
+                                                   Margin="2"
+                                                   IsVisible="{Binding Hypoallergenic}">
+                                                <Label Text="Hypoallergenic" 
+                                                       FontSize="10"/>
+                                            </Frame>
+
+                                            <Frame Padding="6,3" 
+                                                   CornerRadius="12" 
+                                                   BackgroundColor="#E8F5E9"
+                                                   Margin="2"
+                                                   IsVisible="{Binding Natural}">
+                                                <Label Text="Natural Breed" 
+                                                       FontSize="10"/>
+                                            </Frame>
+
+                                            <Frame Padding="6,3" 
+                                                   CornerRadius="12" 
+                                                   BackgroundColor="#FFF3E0"
+                                                   Margin="2"
+                                                   IsVisible="{Binding Rare}">
+                                                <Label Text="Rare" 
+                                                       FontSize="10"/>
+                                            </Frame>
+
+                                            <Frame Padding="6,3" 
+                                                   CornerRadius="12" 
+                                                   BackgroundColor="#F3E5F5"
+                                                   Margin="2"
+                                                   IsVisible="{Binding Experimental}">
+                                                <Label Text="Experimental" 
+                                                       FontSize="10"/>
+                                            </Frame>
+
+                                            <Frame Padding="6,3" 
+                                                   CornerRadius="12" 
+                                                   BackgroundColor="#FCE4EC"
+                                                   Margin="2"
+                                                   IsVisible="{Binding Hairless}">
+                                                <Label Text="Hairless" 
+                                                       FontSize="10"/>
+                                            </Frame>
+
+                                            <Frame Padding="6,3" 
+                                                   CornerRadius="12" 
+                                                   BackgroundColor="#E0F2F1"
+                                                   Margin="2"
+                                                   IsVisible="{Binding Rex}">
+                                                <Label Text="Rex Coat" 
+                                                       FontSize="10"/>
+                                            </Frame>
+
+                                            <Frame Padding="6,3" 
+                                                   CornerRadius="12" 
+                                                   BackgroundColor="#FFF9C4"
+                                                   Margin="2"
+                                                   IsVisible="{Binding SuppressedTail}">
+                                                <Label Text="Short/No Tail" 
+                                                       FontSize="10"/>
+                                            </Frame>
+
+                                            <Frame Padding="6,3" 
+                                                   CornerRadius="12" 
+                                                   BackgroundColor="#FFEBEE"
+                                                   Margin="2"
+                                                   IsVisible="{Binding ShortLegs}">
+                                                <Label Text="Short Legs" 
+                                                       FontSize="10"/>
+                                            </Frame>
+
+                                            <Frame Padding="6,3" 
+                                                   CornerRadius="12" 
+                                                   BackgroundColor="#E1F5FE"
+                                                   Margin="2"
+                                                   IsVisible="{Binding Indoor}">
+                                                <Label Text="Indoor Cat" 
+                                                       FontSize="10"/>
+                                            </Frame>
+
+                                            <Frame Padding="6,3" 
+                                                   CornerRadius="12" 
+                                                   BackgroundColor="#F1F8E9"
+                                                   Margin="2"
+                                                   IsVisible="{Binding Lap, Converter={StaticResource NullableIntToVisibilityConverter}}">
+                                                <Label Text="Lap Cat" 
+                                                       FontSize="10"/>
+                                            </Frame>
+                                        </FlexLayout>
+
+                                        <!-- Links -->
+                                        <BoxView HeightRequest="1" 
+                                                 BackgroundColor="LightGray" 
+                                                 Margin="0,4"
+                                                 IsVisible="{Binding WikipediaUrl, Converter={StaticResource StringNotEmptyConverter}}"/>
+
+                                        <Label Text="Learn More" 
+                                               FontSize="14" 
+                                               FontAttributes="Bold"
+                                               IsVisible="{Binding WikipediaUrl, Converter={StaticResource StringNotEmptyConverter}}"/>
+
+                                        <VerticalStackLayout Spacing="4">
+                                            <Label IsVisible="{Binding WikipediaUrl, Converter={StaticResource StringNotEmptyConverter}}">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="📖 " FontSize="12"/>
+                                                        <Span Text="{Binding WikipediaUrl}" 
+                                                              TextColor="Blue" 
+                                                              TextDecorations="Underline"
+                                                              FontSize="11"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CatDetailsViewModel}}, Path=OpenUrlCommand}"
+                                                                          CommandParameter="{Binding WikipediaUrl}"/>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+
+                                            <Label IsVisible="{Binding CfaUrl, Converter={StaticResource StringNotEmptyConverter}}">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="🏆 CFA: " FontSize="12"/>
+                                                        <Span Text="{Binding CfaUrl}" 
+                                                              TextColor="Blue" 
+                                                              TextDecorations="Underline"
+                                                              FontSize="11"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CatDetailsViewModel}}, Path=OpenUrlCommand}"
+                                                                          CommandParameter="{Binding CfaUrl}"/>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+
+                                            <Label IsVisible="{Binding VetstreetUrl, Converter={StaticResource StringNotEmptyConverter}}">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="🏥 Vetstreet: " FontSize="12"/>
+                                                        <Span Text="{Binding VetstreetUrl}" 
+                                                              TextColor="Blue" 
+                                                              TextDecorations="Underline"
+                                                              FontSize="11"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CatDetailsViewModel}}, Path=OpenUrlCommand}"
+                                                                          CommandParameter="{Binding VetstreetUrl}"/>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+
+                                            <Label IsVisible="{Binding VcahospitalsUrl, Converter={StaticResource StringNotEmptyConverter}}">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="🏥 VCA: " FontSize="12"/>
+                                                        <Span Text="{Binding VcahospitalsUrl}" 
+                                                              TextColor="Blue" 
+                                                              TextDecorations="Underline"
+                                                              FontSize="11"/>
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CatDetailsViewModel}}, Path=OpenUrlCommand}"
+                                                                          CommandParameter="{Binding VcahospitalsUrl}"/>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </VerticalStackLayout>
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <Button Text="Back" 
+                        Command="{Binding GoBackCommand}"
+                        HorizontalOptions="Center"
+                        WidthRequest="200"/>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

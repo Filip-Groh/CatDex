@@ -45,6 +45,9 @@ namespace CatDex {
             builder.Services.AddSingleton<SettingsViewModel>();
             builder.Services.AddSingleton<SettingsPage>();
 
+            builder.Services.AddTransient<CatDetailsViewModel>();
+            builder.Services.AddTransient<CatDetailsPage>();
+
             builder.ConfigureFonts(fonts => {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");

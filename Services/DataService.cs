@@ -27,6 +27,44 @@ namespace CatDex.Services {
                 Id = breed.Id,
                 Name = breed.Name,
                 Description = breed.Description,
+                Temperament = breed.Temperament,
+                Origin = breed.Origin,
+                LifeSpan = breed.LifeSpan,
+                WeightImperial = breed.Weight?.Imperial ?? string.Empty,
+                WeightMetric = breed.Weight?.Metric ?? string.Empty,
+                AltNames = breed.AltNames,
+                CountryCodes = breed.CountryCodes,
+                CountryCode = breed.CountryCode,
+                WikipediaUrl = breed.WikipediaUrl,
+                Indoor = breed.Indoor,
+                Adaptability = breed.Adaptability,
+                AffectionLevel = breed.AffectionLevel,
+                ChildFriendly = breed.ChildFriendly,
+                DogFriendly = breed.DogFriendly,
+                EnergyLevel = breed.EnergyLevel,
+                Grooming = breed.Grooming,
+                HealthIssues = breed.HealthIssues,
+                Intelligence = breed.Intelligence,
+                SheddingLevel = breed.SheddingLevel,
+                SocialNeeds = breed.SocialNeeds,
+                StrangerFriendly = breed.StrangerFriendly,
+                Vocalisation = breed.Vocalisation,
+                Experimental = breed.Experimental,
+                Hairless = breed.Hairless,
+                Natural = breed.Natural,
+                Rare = breed.Rare,
+                Rex = breed.Rex,
+                SuppressedTail = breed.SuppressedTail,
+                ShortLegs = breed.ShortLegs,
+                Hypoallergenic = breed.Hypoallergenic,
+                BreedGroup = breed.BreedGroup,
+                CfaUrl = breed.CfaUrl,
+                VetstreetUrl = breed.VetstreetUrl,
+                VcahospitalsUrl = breed.VcahospitalsUrl,
+                Lap = breed.Lap,
+                CatFriendly = breed.CatFriendly,
+                Bidability = breed.Bidability,
+                ReferenceImageId = breed.ReferenceImageId,
                 InvalidationDate = DateTime.Now.AddDays(1),
             };
 
@@ -41,15 +79,53 @@ namespace CatDex.Services {
 
         public async Task<Breed> UpdateBreedAsync(string id, BreedDTO breed) {
             var existingBreed = await _db.Breeds.FindAsync(id);
-            
+
             if (existingBreed == null) {
                 throw new InvalidOperationException($"Breed with ID {id} not found.");
             }
-            
+
             existingBreed.Name = breed.Name;
             existingBreed.Description = breed.Description;
+            existingBreed.Temperament = breed.Temperament;
+            existingBreed.Origin = breed.Origin;
+            existingBreed.LifeSpan = breed.LifeSpan;
+            existingBreed.WeightImperial = breed.Weight?.Imperial ?? string.Empty;
+            existingBreed.WeightMetric = breed.Weight?.Metric ?? string.Empty;
+            existingBreed.AltNames = breed.AltNames;
+            existingBreed.CountryCodes = breed.CountryCodes;
+            existingBreed.CountryCode = breed.CountryCode;
+            existingBreed.WikipediaUrl = breed.WikipediaUrl;
+            existingBreed.Indoor = breed.Indoor;
+            existingBreed.Adaptability = breed.Adaptability;
+            existingBreed.AffectionLevel = breed.AffectionLevel;
+            existingBreed.ChildFriendly = breed.ChildFriendly;
+            existingBreed.DogFriendly = breed.DogFriendly;
+            existingBreed.EnergyLevel = breed.EnergyLevel;
+            existingBreed.Grooming = breed.Grooming;
+            existingBreed.HealthIssues = breed.HealthIssues;
+            existingBreed.Intelligence = breed.Intelligence;
+            existingBreed.SheddingLevel = breed.SheddingLevel;
+            existingBreed.SocialNeeds = breed.SocialNeeds;
+            existingBreed.StrangerFriendly = breed.StrangerFriendly;
+            existingBreed.Vocalisation = breed.Vocalisation;
+            existingBreed.Experimental = breed.Experimental;
+            existingBreed.Hairless = breed.Hairless;
+            existingBreed.Natural = breed.Natural;
+            existingBreed.Rare = breed.Rare;
+            existingBreed.Rex = breed.Rex;
+            existingBreed.SuppressedTail = breed.SuppressedTail;
+            existingBreed.ShortLegs = breed.ShortLegs;
+            existingBreed.Hypoallergenic = breed.Hypoallergenic;
+            existingBreed.BreedGroup = breed.BreedGroup;
+            existingBreed.CfaUrl = breed.CfaUrl;
+            existingBreed.VetstreetUrl = breed.VetstreetUrl;
+            existingBreed.VcahospitalsUrl = breed.VcahospitalsUrl;
+            existingBreed.Lap = breed.Lap;
+            existingBreed.CatFriendly = breed.CatFriendly;
+            existingBreed.Bidability = breed.Bidability;
+            existingBreed.ReferenceImageId = breed.ReferenceImageId;
             existingBreed.InvalidationDate = DateTime.Now.AddDays(1);
-            
+
             await _db.SaveChangesAsync();
 
             _db.Entry(existingBreed).State = EntityState.Detached;
