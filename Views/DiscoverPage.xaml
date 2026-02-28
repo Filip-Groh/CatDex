@@ -29,13 +29,27 @@
                     <controls:WebDBImage 
                         Url="{Binding Url}" 
                         HorizontalOptions="Fill" 
-                        VerticalOptions="Fill" />
+                        VerticalOptions="Fill"
+                        EnableFullScreenOnTap="False" />
                     <VerticalStackLayout 
                         VerticalOptions="End" 
                         Padding="20">
                         <HorizontalStackLayout
                             HorizontalOptions="Center">
                             <Label Text="{Binding Id, StringFormat='Cat ID: {0}'}" TextColor="White" FontSize="18" />
+                            <Button
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=DownloadImageCommand}"
+                                CommandParameter="{Binding .}"
+                                Text="⬇"
+                                WidthRequest="60"
+                                HeightRequest="60"
+                                CornerRadius="30"
+                                BackgroundColor="#80000000"
+                                TextColor="White"
+                                FontSize="24"
+                                HorizontalOptions="End"
+                                VerticalOptions="Start"
+                                Margin="20" />
                             <Button
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=ToggleFavoriteCommand}"
                                 CommandParameter="{Binding .}"

@@ -29,6 +29,7 @@ namespace CatDex {
             });
 
             builder.Services.AddSingleton<ICatRepositoryService, CatRepositoryService>();
+            builder.Services.AddSingleton<IFileSaverService, FileSaverService>();
 
             builder.Services.AddSingleton<DiscoveryViewModel>();
             builder.Services.AddSingleton<DiscoverPage>();
@@ -47,6 +48,9 @@ namespace CatDex {
 
             builder.Services.AddTransient<CatDetailsViewModel>();
             builder.Services.AddTransient<CatDetailsPage>();
+
+            builder.Services.AddTransient<FullScreenImageViewModel>();
+            builder.Services.AddTransient<FullScreenImagePage>();
 
             builder.ConfigureFonts(fonts => {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

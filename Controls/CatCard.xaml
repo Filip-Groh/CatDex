@@ -22,6 +22,7 @@
                     <controls:WebDBImage Url="{Binding Url}" 
                                          ImageData="{Binding StoredImage}"
                                          HeightRequest="200"
+                                         EnableFullScreenOnTap="False"
                                          Grid.Row="0"/>
 
                     <HorizontalStackLayout HorizontalOptions="End"
@@ -68,6 +69,7 @@
                                          ImageData="{Binding StoredImage}"
                                          HeightRequest="100"
                                          WidthRequest="120"
+                                         EnableFullScreenOnTap="False"
                                          Grid.Column="0"/>
 
                     <VerticalStackLayout Grid.Column="1"

@@ -8,6 +8,7 @@ using System.Diagnostics;
 namespace CatDex.ViewModels {
     public partial class DiscoveryViewModel : ObservableObject {
         private readonly ICatRepositoryService _repository;
+        private readonly IFileSaverService _fileSaverService;
         private int _currentPage = 0;
 
         public ObservableCollection<CatDTO> Cats { get; } = new();
@@ -19,8 +20,9 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial CatDTO? SelectedCat { get; set; }
 
-        public DiscoveryViewModel(ICatRepositoryService repository) {
+        public DiscoveryViewModel(ICatRepositoryService repository, IFileSaverService fileSaverService) {
             _repository = repository;
+            _fileSaverService = fileSaverService;
 
             Task.Run(async () => await OnThresholdReached());
         }
@@ -93,6 +95,26 @@ namespace CatDex.ViewModels {
                 return;
 
             await Shell.Current.GoToAsync($"{nameof(Views.CatDetailsPage)}?CatId={cat.Id}");
+        }
+
+        [RelayCommand]
+        async Task DownloadImage(CatDTO cat) {
+            if (cat == null)
+                return;
+
+            try {
+                var fileName = $"cat_{cat.Id}_{DateTime.Now:yyyyMMddHHmmss}.jpg";
+                var success = await _fileSaverService.SaveImageAsync(cat.Url, null, fileName);
+
+                if (success) {
+                    await Shell.Current.DisplayAlert("Success", "Image saved successfully!", "OK");
+                } else {
+                    await Shell.Current.DisplayAlert("Error", "Failed to save image.", "OK");
+                }
+            } catch (Exception ex) {
+                Debug.WriteLine($"Error downloading image: {ex.Message}");
+                await Shell.Current.DisplayAlert("Error", "Failed to save image.", "OK");
+            }
         }
     }
 }

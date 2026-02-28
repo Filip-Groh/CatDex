@@ -9,6 +9,7 @@
             Routing.RegisterRoute(nameof(Views.FavoritePage), typeof(Views.FavoritePage));
             Routing.RegisterRoute(nameof(Views.SettingsPage), typeof(Views.SettingsPage));
             Routing.RegisterRoute(nameof(Views.CatDetailsPage), typeof(Views.CatDetailsPage));
+            Routing.RegisterRoute(nameof(Views.FullScreenImagePage), typeof(Views.FullScreenImagePage));
         }
     }
 }
