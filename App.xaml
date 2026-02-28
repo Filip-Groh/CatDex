@@ -15,6 +15,7 @@
             <converters:FavoriteToIconConverter x:Key="FavoriteToIconConverter" />
             <converters:CatFavoriteStatusConverter x:Key="CatFavoriteStatusConverter" />
             <converters:CatIsStoredConverter x:Key="CatIsStoredConverter" />
+            <converters:CatPreviouslyStoredConverter x:Key="CatPreviouslyStoredConverter" />
             <converters:BoolToYesNoConverter x:Key="BoolToYesNoConverter" />
             <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
             <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />

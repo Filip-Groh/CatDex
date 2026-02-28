@@ -13,6 +13,7 @@ namespace CatDex.ViewModels {
 
         public ObservableCollection<CatDTO> Cats { get; } = new();
         public Dictionary<string, bool> StoredCatsFavoriteStatus { get; } = new();
+        public HashSet<string> PreviouslyStoredCats { get; } = new();
 
         [ObservableProperty]
         public partial bool IsBusy { get; set; }
@@ -42,6 +43,7 @@ namespace CatDex.ViewModels {
 
                     foreach (var storedCat in storedCats) {
                         StoredCatsFavoriteStatus[storedCat.Id] = storedCat.IsFavorite;
+                        PreviouslyStoredCats.Add(storedCat.Id);
                     }
 
                     foreach (var cat in newCats) {
@@ -58,9 +60,13 @@ namespace CatDex.ViewModels {
         public async Task OnCatSelected() {
             Debug.WriteLine(SelectedCat?.Url);
             if (SelectedCat != null) {
+                bool wasAlreadyStored = IsCatStored(SelectedCat.Id);
                 var storedCat = await _repository.StoreCatAsync(SelectedCat.Id);
-                StoredCatsFavoriteStatus[storedCat.Id] = storedCat.IsFavorite;
-                OnPropertyChanged(nameof(StoredCatsFavoriteStatus));
+
+                if (!wasAlreadyStored) {
+                    StoredCatsFavoriteStatus[storedCat.Id] = storedCat.IsFavorite;
+                    OnPropertyChanged(nameof(StoredCatsFavoriteStatus));
+                }
             }
         }
 
@@ -70,6 +76,10 @@ namespace CatDex.ViewModels {
 
         public bool GetCatFavoriteStatus(string catId) {
             return StoredCatsFavoriteStatus.TryGetValue(catId, out var isFavorite) && isFavorite;
+        }
+
+        public bool IsCatPreviouslyStored(string catId) {
+            return PreviouslyStoredCats.Contains(catId);
         }
 
         [RelayCommand]
