@@ -10,6 +10,8 @@ namespace CatDex.ViewModels {
 
         public ObservableCollection<Cat> Cats { get; } = new();
 
+        public ObservableCollection<Breed> Breeds { get; } = new();
+
         [ObservableProperty]
         public partial bool IsBusy { get; set; }
 
@@ -19,10 +21,33 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial bool IsListMode { get; set; }
 
+        [ObservableProperty]
+        public partial Breed? SelectedBreed { get; set; }
+
         public SeenViewModel(ICatRepositoryService catRepositoryService) {
             _catRepositoryService = catRepositoryService;
 
-            Task.Run(async () => await LoadCatsAsync());
+            Task.Run(async () => {
+                await LoadBreedsAsync();
+                await LoadCatsAsync();
+            });
+        }
+
+        async Task LoadBreedsAsync() {
+            try {
+                var breeds = await _catRepositoryService.GetBreedsAsync();
+
+                Breeds.Clear();
+                Breeds.Add(new Breed { Id = "", Name = "All Breeds" });
+                Breeds.Add(new Breed { Id = "none", Name = "No Breed" });
+                foreach (var breed in breeds.OrderBy(b => b.Name)) {
+                    Breeds.Add(breed);
+                }
+
+                SelectedBreed = Breeds.FirstOrDefault();
+            } catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine($"Error loading breeds: {ex.Message}");
+            }
         }
 
         async Task LoadCatsAsync() {
@@ -32,7 +57,15 @@ namespace CatDex.ViewModels {
             try {
                 IsBusy = true;
 
-                var cats = await _catRepositoryService.GetStoredCatsAsync();
+                IEnumerable<Cat> cats;
+
+                if (SelectedBreed?.Id == "none") {
+                    var allCats = await _catRepositoryService.GetStoredCatsAsync(null);
+                    cats = allCats.Where(c => c.Breeds == null || !c.Breeds.Any());
+                } else {
+                    var breedId = SelectedBreed?.Id == "" ? null : SelectedBreed?.Id;
+                    cats = await _catRepositoryService.GetStoredCatsAsync(breedId);
+                }
 
                 Cats.Clear();
                 foreach (var cat in cats) {
@@ -100,6 +133,10 @@ namespace CatDex.ViewModels {
         [RelayCommand]
         void ToggleDisplayMode() {
             IsListMode = !IsListMode;
+        }
+
+        partial void OnSelectedBreedChanged(Breed? value) {
+            Task.Run(async () => await LoadCatsAsync());
         }
     }
 }
