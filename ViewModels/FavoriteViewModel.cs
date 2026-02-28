@@ -16,6 +16,9 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial bool IsRefreshing { get; set; }
 
+        [ObservableProperty]
+        public partial bool IsListMode { get; set; }
+
         public FavoriteViewModel(ICatRepositoryService catRepositoryService) {
             _catRepositoryService = catRepositoryService;
 
@@ -70,6 +73,11 @@ namespace CatDex.ViewModels {
                 return;
 
             await Shell.Current.GoToAsync($"{nameof(Views.CatDetailsPage)}?CatId={cat.Id}");
+        }
+
+        [RelayCommand]
+        void ToggleDisplayMode() {
+            IsListMode = !IsListMode;
         }
     }
 }

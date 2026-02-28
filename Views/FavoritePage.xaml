@@ -8,15 +8,34 @@
              x:DataType="viewmodels:FavoriteViewModel"
              Title="FavoritePage">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,Auto,*">
         <ActivityIndicator IsRunning="{Binding IsBusy}"
                            IsVisible="{Binding IsBusy}"
                            Grid.Row="0"
                            Margin="0,10,0,10"/>
 
+        <Button Text="{Binding IsListMode, Converter={StaticResource InvertedBoolConverter}, ConverterParameter='Gallery|List'}"
+                Command="{Binding ToggleDisplayModeCommand}"
+                HorizontalOptions="End"
+                Margin="8,0"
+                Grid.Row="1">
+            <Button.Triggers>
+                <DataTrigger TargetType="Button"
+                             Binding="{Binding IsListMode}"
+                             Value="True">
+                    <Setter Property="Text" Value="Gallery"/>
+                </DataTrigger>
+                <DataTrigger TargetType="Button"
+                             Binding="{Binding IsListMode}"
+                             Value="False">
+                    <Setter Property="Text" Value="List"/>
+                </DataTrigger>
+            </Button.Triggers>
+        </Button>
+
         <RefreshView IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding RefreshCommand}"
-                     Grid.Row="1">
+                     Grid.Row="2">
             <CollectionView ItemsSource="{Binding Cats}"
                             SelectionMode="None">
 
@@ -24,13 +43,28 @@
                     <GridItemsLayout Orientation="Vertical" 
                                      Span="2" 
                                      HorizontalItemSpacing="8"
-                                     VerticalItemSpacing="8"/>
+                                     VerticalItemSpacing="8"
+                                     x:Name="gridLayout"/>
                 </CollectionView.ItemsLayout>
+
+                <CollectionView.Triggers>
+                    <DataTrigger TargetType="CollectionView"
+                                 Binding="{Binding IsListMode}"
+                                 Value="True">
+                        <Setter Property="ItemsLayout">
+                            <Setter.Value>
+                                <LinearItemsLayout Orientation="Vertical" 
+                                                   ItemSpacing="8"/>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </CollectionView.Triggers>
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Cat">
                         <controls:CatCard ToggleFavoriteCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FavoriteViewModel}}, Path=ToggleFavoriteCommand}"
-                                          TappedCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FavoriteViewModel}}, Path=NavigateToCatDetailsCommand}"/>
+                                          TappedCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FavoriteViewModel}}, Path=NavigateToCatDetailsCommand}"
+                                          IsListMode="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:FavoriteViewModel}}, Path=IsListMode}"/>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
 

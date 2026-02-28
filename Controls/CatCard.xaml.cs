@@ -22,6 +22,15 @@ public partial class CatCard : ContentView
         set => SetValue(TappedCommandProperty, value);
     }
 
+    public static readonly BindableProperty IsListModeProperty =
+        BindableProperty.Create(nameof(IsListMode), typeof(bool), typeof(CatCard), false);
+
+    public bool IsListMode
+    {
+        get => (bool)GetValue(IsListModeProperty);
+        set => SetValue(IsListModeProperty, value);
+    }
+
     public CatCard()
     {
         InitializeComponent();

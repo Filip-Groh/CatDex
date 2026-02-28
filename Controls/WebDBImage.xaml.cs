@@ -46,9 +46,13 @@ public partial class WebDBImage : ContentView
 
 	private void UpdateImageSource()
 	{
+		if (DisplayImage == null)
+			return;
+
 		if (ImageData?.Bytes != null && ImageData.Bytes.Length > 0)
 		{
-			DisplayImage.Source = ImageSource.FromStream(() => new MemoryStream(ImageData.Bytes));
+			var bytes = ImageData.Bytes;
+			DisplayImage.Source = ImageSource.FromStream(() => new MemoryStream(bytes));
 		}
 		else if (!string.IsNullOrEmpty(Url))
 		{

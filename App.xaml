@@ -19,6 +19,9 @@
             <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
             <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
             <converters:NullableIntToVisibilityConverter x:Key="NullableIntToVisibilityConverter" />
+            <converters:AdditionalBreedsConverter x:Key="AdditionalBreedsConverter" />
+            <converters:CompareConverter x:Key="CompareConverter" />
+            <converters:FirstBreedNameConverter x:Key="FirstBreedNameConverter" />
 
             <!-- CommunityToolkit.Maui Converters -->
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
