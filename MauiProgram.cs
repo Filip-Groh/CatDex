@@ -30,6 +30,7 @@ namespace CatDex {
 
             builder.Services.AddSingleton<ICatRepositoryService, CatRepositoryService>();
             builder.Services.AddSingleton<IFileSaverService, FileSaverService>();
+            builder.Services.AddSingleton<IThemeService, ThemeService>();
 
             builder.Services.AddSingleton<DiscoveryViewModel>();
             builder.Services.AddSingleton<DiscoverPage>();

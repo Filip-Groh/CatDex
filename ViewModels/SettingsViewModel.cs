@@ -1,10 +1,12 @@
 using CatDex.Services.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
 
 namespace CatDex.ViewModels {
     public partial class SettingsViewModel : ObservableObject {
         private readonly ICatRepositoryService _catRepositoryService;
+        private readonly IThemeService _themeService;
 
         [ObservableProperty]
         public partial int TotalCats { get; set; }
@@ -18,10 +20,36 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial bool IsBusy { get; set; }
 
-        public SettingsViewModel(ICatRepositoryService catRepositoryService) {
+        [ObservableProperty]
+        public partial string SelectedTheme { get; set; }
+
+        public ObservableCollection<string> ThemeOptions { get; } = new ObservableCollection<string> 
+        { 
+            "System", 
+            "Light", 
+            "Dark" 
+        };
+
+        public SettingsViewModel(ICatRepositoryService catRepositoryService, IThemeService themeService) {
             _catRepositoryService = catRepositoryService;
+            _themeService = themeService;
+
+            SelectedTheme = _themeService.GetThemeName();
 
             Task.Run(async () => await LoadStatisticsAsync());
+        }
+
+        partial void OnSelectedThemeChanged(string value) {
+            if (string.IsNullOrEmpty(value))
+                return;
+
+            var theme = value switch {
+                "Light" => AppTheme.Light,
+                "Dark" => AppTheme.Dark,
+                _ => AppTheme.Unspecified
+            };
+
+            _themeService.SetTheme(theme);
         }
 
         async Task LoadStatisticsAsync() {
