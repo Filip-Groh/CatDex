@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:dtos="clr-namespace:CatDex.Models.DTOs"
              xmlns:viewmodels="clr-namespace:CatDex.ViewModels"
+             xmlns:controls="clr-namespace:CatDex.Controls"
              x:Class="CatDex.Views.DiscoverPage"
-             x:DataType="viewmodels:CatDiscoveryViewModel"
+             x:DataType="viewmodels:DiscoveryViewModel"
              Title="DiscoverPage">
 
     <CollectionView 
@@ -25,14 +26,10 @@
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="dtos:CatDTO">
                 <Grid HeightRequest="{Binding Height, Source={RelativeSource AncestorType={x:Type CollectionView}}}">
-                    <Image 
-                        Source="{Binding Url}" 
-                        Aspect="AspectFill" 
+                    <controls:WebDBImage 
+                        Url="{Binding Url}" 
                         HorizontalOptions="Fill" 
                         VerticalOptions="Fill" />
-
-                    
-
                     <VerticalStackLayout 
                         VerticalOptions="End" 
                         Padding="20">
@@ -40,7 +37,7 @@
                             HorizontalOptions="Center">
                             <Label Text="{Binding Id, StringFormat='Cat ID: {0}'}" TextColor="White" FontSize="18" />
                             <Button
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CatDiscoveryViewModel}}, Path=ToggleFavoriteCommand}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=ToggleFavoriteCommand}"
                                 CommandParameter="{Binding .}"
                                 WidthRequest="60"
                                 HeightRequest="60"
@@ -54,13 +51,13 @@
                                 <Button.Text>
                                     <MultiBinding Converter="{StaticResource CatFavoriteStatusConverter}">
                                         <Binding Path="." />
-                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:CatDiscoveryViewModel}}" />
+                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" />
                                     </MultiBinding>
                                 </Button.Text>
                                 <Button.IsVisible>
                                     <MultiBinding Converter="{StaticResource CatIsStoredConverter}">
                                         <Binding Path="." />
-                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:CatDiscoveryViewModel}}" />
+                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" />
                                     </MultiBinding>
                                 </Button.IsVisible>
                             </Button>

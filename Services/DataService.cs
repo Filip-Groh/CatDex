@@ -59,7 +59,11 @@ namespace CatDex.Services {
 
         public async Task<Cat?> GetCatAsync(string id) {
             try {
-                var cat = await _db.Cats.AsNoTracking().Include(cat => cat.Breeds).Where(cat => cat.Id == id).FirstAsync();
+                var cat = await _db.Cats.AsNoTracking()
+                    .Include(cat => cat.Breeds)
+                    .Include(cat => cat.StoredImage)
+                    .Where(cat => cat.Id == id)
+                    .FirstAsync();
                 return cat;
             } catch {
                 return null;
@@ -67,7 +71,10 @@ namespace CatDex.Services {
         }
 
         public async Task<ICollection<Cat>> GetCatsAsync(string? breedId = null) {
-            var cats = _db.Cats.AsNoTracking().Include(cat => cat.Breeds).AsQueryable();
+            var cats = _db.Cats.AsNoTracking()
+                .Include(cat => cat.Breeds)
+                .Include(cat => cat.StoredImage)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(breedId)) {
                 cats = cats.Where(cat => cat.Breeds.Any(breed => breed.Id == breedId));
@@ -77,7 +84,11 @@ namespace CatDex.Services {
         }
 
         public async Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId = null) {
-            var cats = _db.Cats.AsNoTracking().Include(cat => cat.Breeds).AsQueryable().Where(cat => cat.IsFavorite);
+            var cats = _db.Cats.AsNoTracking()
+                .Include(cat => cat.Breeds)
+                .Include(cat => cat.StoredImage)
+                .AsQueryable()
+                .Where(cat => cat.IsFavorite);
 
             if (!string.IsNullOrEmpty(breedId)) {
                 cats = cats.Where(cat => cat.Breeds.Any(breed => breed.Id == breedId));
@@ -86,7 +97,7 @@ namespace CatDex.Services {
             return await cats.ToArrayAsync();
         }
 
-        public async Task<Cat> CreateCatAsync(DetailedCatDTO cat) {
+        public async Task<Cat> StoreCatAsync(DetailedCatDTO cat) {
             var createdCat = new Cat {
                 Id = cat.Id,
                 Url = cat.Url,
@@ -112,6 +123,37 @@ namespace CatDex.Services {
             _db.Entry(createdCat).State = EntityState.Detached;
 
             return createdCat;
+        }
+
+        public async Task<Cat> CreateCatAsync(CustomCatDTO cat) {
+            var catObject = new Cat {
+                Id = cat.Id,
+                Url = null,
+                Width = cat.Width,
+                Height = cat.Height,
+                IsFavorite = false,
+                InvalidationDate = null,
+            };
+
+            var image = new ImageData {
+                Id = cat.Id,
+                Bytes = cat.Bytes,
+                Cat = catObject
+            };
+
+            catObject.StoredImage = image;
+
+            _db.Images.Add(image);
+
+            var breeds = await _db.Breeds.Where(breed => cat.BreedIds != null && cat.BreedIds.Contains(breed.Id)).ToArrayAsync();
+
+            catObject.Breeds = breeds;
+
+            await _db.SaveChangesAsync();
+
+            _db.Entry(catObject).State = EntityState.Detached;
+
+            return catObject;
         }
 
         public async Task<Cat> UpdateCatAsync(string id, DetailedCatDTO cat) {
@@ -163,6 +205,21 @@ namespace CatDex.Services {
             _db.Entry(existingCat).State = EntityState.Detached;
 
             return existingCat;
+        }
+
+        public async Task<int> DeleteNonCreatedNonFavoriteCatsAsync() {
+            var catsToDelete = await _db.Cats
+                .Include(cat => cat.StoredImage)
+                .Where(cat => !cat.IsFavorite && cat.StoredImage == null)
+                .ToListAsync();
+
+            var count = catsToDelete.Count;
+
+            _db.Cats.RemoveRange(catsToDelete);
+
+            await _db.SaveChangesAsync();
+
+            return count;
         }
     }
 }

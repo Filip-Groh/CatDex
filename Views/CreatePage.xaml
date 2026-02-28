@@ -1,12 +1,135 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CatDex.ViewModels"
+             xmlns:models="clr-namespace:CatDex.Models"
              x:Class="CatDex.Views.CreatePage"
-             Title="Create">
-    <VerticalStackLayout>
-        <Label 
-            Text="Create Page"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:DataType="viewmodels:CreateViewModel"
+             Title="Create Cat">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label 
+                Text="Create a Custom Cat"
+                FontSize="24"
+                FontAttributes="Bold"
+                HorizontalOptions="Center"
+                Margin="0,0,0,10" />
+
+            <Border 
+                StrokeThickness="1"
+                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                StrokeShape="RoundRectangle 10"
+                Padding="15"
+                Margin="0,0,0,10">
+                <VerticalStackLayout Spacing="10">
+
+                    <Label Text="Cat ID" FontSize="16" FontAttributes="Bold" />
+                    <Entry 
+                        Text="{Binding CatId}"
+                        Placeholder="Enter a unique Cat ID"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+
+                    <Label Text="Select Image" FontSize="16" FontAttributes="Bold" Margin="0,10,0,0" />
+                    <Button 
+                        Text="Pick Image"
+                        Command="{Binding PickImageCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                        HorizontalOptions="Start" />
+
+                    <Image 
+                        Source="{Binding ImageSource}"
+                        IsVisible="{Binding ImageSource, Converter={StaticResource IsNotNullConverter}}"
+                        HeightRequest="200"
+                        Aspect="AspectFit"
+                        Margin="0,10,0,0" />
+
+                    <HorizontalStackLayout 
+                        Spacing="10"
+                        Margin="0,10,0,0"
+                        IsVisible="{Binding ImageSource, Converter={StaticResource IsNotNullConverter}}">
+                        <Label Text="Dimensions:" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label Text="{Binding Width}" VerticalOptions="Center" />
+                        <Label Text="x" VerticalOptions="Center" />
+                        <Label Text="{Binding Height}" VerticalOptions="Center" />
+                        <Label Text="px" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border 
+                StrokeThickness="1"
+                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                StrokeShape="RoundRectangle 10"
+                Padding="15"
+                Margin="0,0,0,10"
+                IsVisible="{Binding AvailableBreeds.Count, Converter={StaticResource IsNotZeroConverter}}">
+                <VerticalStackLayout Spacing="10">
+
+                    <Label Text="Select Breeds (Optional)" FontSize="16" FontAttributes="Bold" />
+
+                    <CollectionView 
+                        ItemsSource="{Binding AvailableBreeds}"
+                        SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Breed">
+                                <Border 
+                                    StrokeThickness="1"
+                                    Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray500}}"
+                                    StrokeShape="RoundRectangle 5"
+                                    Padding="10"
+                                    Margin="0,5">
+                                    <HorizontalStackLayout>
+                                        <Button
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CreateViewModel}}, Path=ToggleBreedCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Text="✓"
+                                            WidthRequest="30"
+                                            HeightRequest="30"
+                                            CornerRadius="15"
+                                            Padding="0"
+                                            FontSize="12"
+                                            BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"
+                                            TextColor="White" />
+                                        <Label 
+                                            Text="{Binding Name}"
+                                            VerticalOptions="Center"
+                                            Margin="10,0,0,0" />
+                                    </HorizontalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label 
+                Text="{Binding ErrorMessage}"
+                TextColor="Red"
+                IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}"
+                Margin="0,10,0,0" />
+
+            <Label 
+                Text="{Binding SuccessMessage}"
+                TextColor="Green"
+                IsVisible="{Binding SuccessMessage, Converter={StaticResource IsNotNullConverter}}"
+                Margin="0,10,0,0" />
+
+            <Button 
+                Text="Create Cat"
+                Command="{Binding CreateCatCommand}"
+                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                BackgroundColor="{StaticResource Primary}"
+                TextColor="White"
+                FontAttributes="Bold"
+                Margin="0,10,0,20" />
+
+            <ActivityIndicator 
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                Color="{StaticResource Primary}"
+                HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

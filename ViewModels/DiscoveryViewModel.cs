@@ -6,7 +6,7 @@ using CatDex.Models.DTOs;
 using System.Diagnostics;
 
 namespace CatDex.ViewModels {
-    public partial class CatDiscoveryViewModel : ObservableObject {
+    public partial class DiscoveryViewModel : ObservableObject {
         private readonly ICatRepositoryService _repository;
         private int _currentPage = 0;
 
@@ -19,7 +19,7 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial CatDTO? SelectedCat { get; set; }
 
-        public CatDiscoveryViewModel(ICatRepositoryService repository) {
+        public DiscoveryViewModel(ICatRepositoryService repository) {
             _repository = repository;
 
             Task.Run(async () => await OnThresholdReached());

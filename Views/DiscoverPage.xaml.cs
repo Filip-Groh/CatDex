@@ -4,7 +4,7 @@ namespace CatDex.Views;
 
 public partial class DiscoverPage : ContentPage
 {
-	public DiscoverPage(CatDiscoveryViewModel vm)
+	public DiscoverPage(DiscoveryViewModel vm)
 	{
 		InitializeComponent();
         BindingContext = vm;
@@ -13,7 +13,7 @@ public partial class DiscoverPage : ContentPage
     private async void OnCollectionViewScrolled(object sender, ItemsViewScrolledEventArgs e)
     {
         var collectionView = (CollectionView)sender;
-        var viewModel = (CatDiscoveryViewModel)BindingContext;
+        var viewModel = (DiscoveryViewModel)BindingContext;
         
         int currentIndex = e.FirstVisibleItemIndex;
         

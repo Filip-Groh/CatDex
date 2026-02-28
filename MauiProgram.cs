@@ -30,17 +30,19 @@ namespace CatDex {
 
             builder.Services.AddSingleton<ICatRepositoryService, CatRepositoryService>();
 
-            builder.Services.AddSingleton<CatDiscoveryViewModel>();
+            builder.Services.AddSingleton<DiscoveryViewModel>();
             builder.Services.AddSingleton<DiscoverPage>();
 
             builder.Services.AddSingleton<SearchViewModel>();
             builder.Services.AddSingleton<SearchPage>();
 
+            builder.Services.AddSingleton<CreateViewModel>();
             builder.Services.AddSingleton<CreatePage>();
 
             builder.Services.AddSingleton<FavoriteViewModel>();
             builder.Services.AddSingleton<FavoritePage>();
 
+            builder.Services.AddSingleton<SettingsViewModel>();
             builder.Services.AddSingleton<SettingsPage>();
 
             builder.ConfigureFonts(fonts => {

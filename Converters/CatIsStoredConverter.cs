@@ -5,7 +5,7 @@ using System.Globalization;
 namespace CatDex.Converters {
     public class CatIsStoredConverter : IMultiValueConverter {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-            if (values.Length == 2 && values[0] is CatDTO cat && values[1] is CatDiscoveryViewModel viewModel) {
+            if (values.Length == 2 && values[0] is CatDTO cat && values[1] is DiscoveryViewModel viewModel) {
                 return viewModel.IsCatStored(cat.Id);
             }
             return false;

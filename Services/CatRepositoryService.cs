@@ -110,8 +110,12 @@ namespace CatDex.Services {
             if (cat?.InvalidationDate < DateTime.Now) {
                 return await _data.UpdateCatAsync(id, fetchedCat);
             } else {
-                return await _data.CreateCatAsync(fetchedCat);
+                return await _data.StoreCatAsync(fetchedCat);
             }
+        }
+
+        public async Task<Cat> CreateCatAsync(CustomCatDTO cat) {
+            return await _data.CreateCatAsync(cat);
         }
 
         public async Task<Cat> DeleteCatAsync(string id) {           
@@ -120,6 +124,10 @@ namespace CatDex.Services {
 
         public async Task<Cat> SetCatIsFavorite(string id, bool isFavorite) {
             return await _data.SetCatIsFavorite(id, isFavorite);
+        }
+
+        public async Task<int> DeleteNonCreatedNonFavoriteCatsAsync() {
+            return await _data.DeleteNonCreatedNonFavoriteCatsAsync();
         }
     }
 }
