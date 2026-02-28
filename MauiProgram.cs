@@ -33,8 +33,8 @@ namespace CatDex {
             builder.Services.AddSingleton<DiscoveryViewModel>();
             builder.Services.AddSingleton<DiscoverPage>();
 
-            builder.Services.AddSingleton<SearchViewModel>();
-            builder.Services.AddSingleton<SearchPage>();
+            builder.Services.AddSingleton<SeenViewModel>();
+            builder.Services.AddSingleton<SeenPage>();
 
             builder.Services.AddSingleton<CreateViewModel>();
             builder.Services.AddSingleton<CreatePage>();

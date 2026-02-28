@@ -11,8 +11,8 @@
             <ShellContent ContentTemplate="{DataTemplate local:DiscoverPage}" />
         </Tab>
 
-        <Tab Title="Search" Icon="settings.png">
-            <ShellContent ContentTemplate="{DataTemplate local:SearchPage}" />
+        <Tab Title="Seen" Icon="settings.png">
+            <ShellContent ContentTemplate="{DataTemplate local:SeenPage}" />
         </Tab>
 
         <Tab Title="Create" Icon="settings.png">

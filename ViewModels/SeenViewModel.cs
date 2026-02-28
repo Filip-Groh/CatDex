@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 
 namespace CatDex.ViewModels {
-    public partial class SearchViewModel : ObservableObject {
+    public partial class SeenViewModel : ObservableObject {
         private readonly ICatRepositoryService _catRepositoryService;
 
         public ObservableCollection<Cat> Cats { get; } = new();
@@ -19,7 +19,7 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial bool IsListMode { get; set; }
 
-        public SearchViewModel(ICatRepositoryService catRepositoryService) {
+        public SeenViewModel(ICatRepositoryService catRepositoryService) {
             _catRepositoryService = catRepositoryService;
 
             Task.Run(async () => await LoadCatsAsync());
@@ -64,6 +64,28 @@ namespace CatDex.ViewModels {
                 cat.IsFavorite = newIsFavorite;
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine($"Error toggling favorite: {ex.Message}");
+            }
+        }
+
+        [RelayCommand]
+        async Task DeleteCat(Cat cat) {
+            if (cat == null)
+                return;
+
+            try {
+                bool confirm = await Shell.Current.DisplayAlertAsync(
+                    "Delete Cat",
+                    $"Are you sure you want to delete this cat (ID: {cat.Id})?",
+                    "Delete",
+                    "Cancel");
+
+                if (!confirm)
+                    return;
+
+                await _catRepositoryService.DeleteCatAsync(cat.Id);
+                Cats.Remove(cat);
+            } catch (Exception ex) {
+                await Shell.Current.DisplayAlertAsync("Error", $"Failed to delete cat: {ex.Message}", "OK");
             }
         }
 

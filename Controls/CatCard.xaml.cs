@@ -31,6 +31,15 @@ public partial class CatCard : ContentView
         set => SetValue(IsListModeProperty, value);
     }
 
+    public static readonly BindableProperty DeleteCommandProperty =
+        BindableProperty.Create(nameof(DeleteCommand), typeof(ICommand), typeof(CatCard));
+
+    public ICommand DeleteCommand
+    {
+        get => (ICommand)GetValue(DeleteCommandProperty);
+        set => SetValue(DeleteCommandProperty, value);
+    }
+
     public CatCard()
     {
         InitializeComponent();

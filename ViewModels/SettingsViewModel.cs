@@ -52,13 +52,28 @@ namespace CatDex.ViewModels {
                 return;
 
             try {
+                bool confirm = await Shell.Current.DisplayAlertAsync(
+                    "Delete Cats",
+                    "Are you sure you want to delete all non-created and non-favorite cats?",
+                    "Delete",
+                    "Cancel");
+
+                if (!confirm)
+                    return;
+
                 IsBusy = true;
 
                 var deletedCount = await _catRepositoryService.DeleteNonCreatedNonFavoriteCatsAsync();
 
+                await Shell.Current.DisplayAlertAsync(
+                    "Success",
+                    $"Deleted {deletedCount} cat(s)",
+                    "OK");
+
                 await LoadStatisticsAsync();
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine($"Error deleting cats: {ex.Message}");
+                await Shell.Current.DisplayAlertAsync("Error", $"Failed to delete cats: {ex.Message}", "OK");
             } finally {
                 IsBusy = false;
             }

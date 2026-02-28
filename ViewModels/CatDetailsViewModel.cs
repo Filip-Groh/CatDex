@@ -52,6 +52,29 @@ namespace CatDex.ViewModels {
         }
 
         [RelayCommand]
+        async Task Delete() {
+            if (Cat == null)
+                return;
+
+            try {
+                bool confirm = await Shell.Current.DisplayAlertAsync(
+                    "Delete Cat",
+                    $"Are you sure you want to delete this cat (ID: {Cat.Id})?",
+                    "Delete",
+                    "Cancel");
+
+                if (!confirm)
+                    return;
+
+                await _repository.DeleteCatAsync(Cat.Id);
+                await Shell.Current.GoToAsync("..");
+            }
+            catch (Exception ex) {
+                await Shell.Current.DisplayAlertAsync("Error", $"Failed to delete cat: {ex.Message}", "OK");
+            }
+        }
+
+        [RelayCommand]
         async Task GoBack() {
             await Shell.Current.GoToAsync("..");
         }

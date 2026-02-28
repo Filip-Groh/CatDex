@@ -2,9 +2,9 @@ using CatDex.ViewModels;
 
 namespace CatDex.Views;
 
-public partial class SearchPage : ContentPage
+public partial class SeenPage : ContentPage
 {
-	public SearchPage(SearchViewModel viewModel)
+	public SeenPage(SeenViewModel viewModel)
 	{
 		InitializeComponent();
 		BindingContext = viewModel;

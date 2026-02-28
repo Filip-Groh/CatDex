@@ -24,20 +24,33 @@
                                          HeightRequest="200"
                                          Grid.Row="0"/>
 
-                    <Button
-                        Command="{Binding Source={x:Reference this}, Path=ToggleFavoriteCommand}"
-                        CommandParameter="{Binding .}"
-                        WidthRequest="40"
-                        HeightRequest="40"
-                        CornerRadius="20"
-                        BackgroundColor="#80000000"
-                        Text="{Binding IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"
-                        TextColor="White"
-                        FontSize="20"
-                        HorizontalOptions="End"
-                        VerticalOptions="Start"
-                        Margin="8"
-                        Grid.Row="0"/>
+                    <HorizontalStackLayout HorizontalOptions="End"
+                                           VerticalOptions="Start"
+                                           Spacing="4"
+                                           Margin="8"
+                                           Grid.Row="0">
+                        <Button
+                            Command="{Binding Source={x:Reference this}, Path=ToggleFavoriteCommand}"
+                            CommandParameter="{Binding .}"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            CornerRadius="20"
+                            BackgroundColor="#80000000"
+                            Text="{Binding IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"
+                            TextColor="White"
+                            FontSize="20"/>
+
+                        <Button
+                            Command="{Binding Source={x:Reference this}, Path=DeleteCommand}"
+                            CommandParameter="{Binding .}"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            CornerRadius="20"
+                            BackgroundColor="#80000000"
+                            Text="🗑️"
+                            TextColor="White"
+                            FontSize="20"/>
+                    </HorizontalStackLayout>
 
                     <Grid Grid.Row="1"
                           Padding="8"
@@ -79,19 +92,32 @@
                         </Label>
                     </VerticalStackLayout>
 
-                    <Button
-                        Command="{Binding Source={x:Reference this}, Path=ToggleFavoriteCommand}"
-                        CommandParameter="{Binding .}"
-                        WidthRequest="40"
-                        HeightRequest="40"
-                        CornerRadius="20"
-                        BackgroundColor="#80000000"
-                        Text="{Binding IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"
-                        TextColor="White"
-                        FontSize="20"
-                        VerticalOptions="Center"
-                        Margin="8"
-                        Grid.Column="2"/>
+                    <HorizontalStackLayout VerticalOptions="Center"
+                                           Spacing="4"
+                                           Margin="8"
+                                           Grid.Column="2">
+                        <Button
+                            Command="{Binding Source={x:Reference this}, Path=ToggleFavoriteCommand}"
+                            CommandParameter="{Binding .}"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            CornerRadius="20"
+                            BackgroundColor="#80000000"
+                            Text="{Binding IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"
+                            TextColor="White"
+                            FontSize="20"/>
+
+                        <Button
+                            Command="{Binding Source={x:Reference this}, Path=DeleteCommand}"
+                            CommandParameter="{Binding .}"
+                            WidthRequest="40"
+                            HeightRequest="40"
+                            CornerRadius="20"
+                            BackgroundColor="#80000000"
+                            Text="🗑️"
+                            TextColor="White"
+                            FontSize="20"/>
+                    </HorizontalStackLayout>
                 </Grid>
             </Grid>
         </Frame>

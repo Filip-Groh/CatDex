@@ -4,9 +4,9 @@
              xmlns:models="clr-namespace:CatDex.Models"
              xmlns:viewmodels="clr-namespace:CatDex.ViewModels"
              xmlns:controls="clr-namespace:CatDex.Controls"
-             x:Class="CatDex.Views.SearchPage"
-             x:DataType="viewmodels:SearchViewModel"
-             Title="SearchPage">
+             x:Class="CatDex.Views.SeenPage"
+             x:DataType="viewmodels:SeenViewModel"
+             Title="SeenPage">
 
     <Grid RowDefinitions="Auto,Auto,*">
         <ActivityIndicator IsRunning="{Binding IsBusy}"
@@ -62,9 +62,10 @@
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Cat">
-                        <controls:CatCard ToggleFavoriteCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SearchViewModel}}, Path=ToggleFavoriteCommand}"
-                                          TappedCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SearchViewModel}}, Path=NavigateToCatDetailsCommand}"
-                                          IsListMode="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SearchViewModel}}, Path=IsListMode}"/>
+                        <controls:CatCard ToggleFavoriteCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SeenViewModel}}, Path=ToggleFavoriteCommand}"
+                                          TappedCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SeenViewModel}}, Path=NavigateToCatDetailsCommand}"
+                                          DeleteCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SeenViewModel}}, Path=DeleteCatCommand}"
+                                          IsListMode="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SeenViewModel}}, Path=IsListMode}"/>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
 

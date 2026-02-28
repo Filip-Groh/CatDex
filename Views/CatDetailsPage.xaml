@@ -24,18 +24,30 @@
                                              ImageData="{Binding Cat.StoredImage}"
                                              HeightRequest="400"/>
 
-                        <Button
-                            Command="{Binding ToggleFavoriteCommand}"
-                            WidthRequest="50"
-                            HeightRequest="50"
-                            CornerRadius="25"
-                            BackgroundColor="#80000000"
-                            Text="{Binding Cat.IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"
-                            TextColor="White"
-                            FontSize="24"
-                            HorizontalOptions="End"
-                            VerticalOptions="Start"
-                            Margin="12"/>
+                        <HorizontalStackLayout HorizontalOptions="End"
+                                               VerticalOptions="Start"
+                                               Spacing="8"
+                                               Margin="12">
+                            <Button
+                                Command="{Binding ToggleFavoriteCommand}"
+                                WidthRequest="50"
+                                HeightRequest="50"
+                                CornerRadius="25"
+                                BackgroundColor="#80000000"
+                                Text="{Binding Cat.IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"
+                                TextColor="White"
+                                FontSize="24"/>
+
+                            <Button
+                                Command="{Binding DeleteCommand}"
+                                WidthRequest="50"
+                                HeightRequest="50"
+                                CornerRadius="25"
+                                BackgroundColor="#80000000"
+                                Text="🗑️"
+                                TextColor="White"
+                                FontSize="24"/>
+                        </HorizontalStackLayout>
                     </Grid>
                 </Frame>
 
