@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CatDex.Controls.ZoomableImage"
+             x:Name="this">
+    <Grid>
+        <ScrollView x:Name="ScrollContainer"
+                    Orientation="Both"
+                    HorizontalScrollBarVisibility="Never"
+                    VerticalScrollBarVisibility="Never">
+            <Image x:Name="ZoomImage"
+                   Aspect="AspectFit"
+                   HorizontalOptions="Fill"
+                   VerticalOptions="Fill" />
+        </ScrollView>
+
+        <VerticalStackLayout HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            Spacing="10"
+                            Margin="10,0,0,0">
+            <Button Text="+"
+                    Clicked="OnZoomIn"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#80000000"
+                    TextColor="White"
+                    FontSize="32"
+                    FontAttributes="Bold"
+                    Padding="0"
+                    InputTransparent="False" />
+            <Button Text="-"
+                    Clicked="OnZoomOut"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    BackgroundColor="#80000000"
+                    TextColor="White"
+                    FontSize="32"
+                    FontAttributes="Bold"
+                    Padding="0"
+                    InputTransparent="False" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentView>

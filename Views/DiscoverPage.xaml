@@ -31,7 +31,7 @@
                         Url="{Binding Url}" 
                         HorizontalOptions="Fill" 
                         VerticalOptions="Fill"
-                        EnableFullScreenOnTap="False" />
+                        EnableFullScreenOnTap="True" />
                     <Button
                         Text="👁"
                         WidthRequest="50"
@@ -43,7 +43,8 @@
                         HorizontalOptions="Start"
                         VerticalOptions="Start"
                         Margin="20"
-                        IsEnabled="False">
+                        IsEnabled="False"
+                        InputTransparent="False">
                         <Button.IsVisible>
                             <MultiBinding Converter="{StaticResource CatPreviouslyStoredConverter}">
                                 <Binding Path="." />
@@ -54,7 +55,8 @@
                     </Button>
                     <VerticalStackLayout 
                         VerticalOptions="End" 
-                        Padding="20">
+                        Padding="20"
+                        InputTransparent="False">
                         <Label 
                             FontSize="24"
                             FontAttributes="Bold"
@@ -63,7 +65,8 @@
                             Margin="0,0,0,10"
                             Text="{Binding Breeds, Converter={StaticResource FirstBreedNameConverter}}"/>
                         <HorizontalStackLayout
-                            HorizontalOptions="Center">
+                            HorizontalOptions="Center"
+                            InputTransparent="False">
                             <Button
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=DownloadImageCommand}"
                                 CommandParameter="{Binding .}"
@@ -76,7 +79,8 @@
                                 FontSize="24"
                                 HorizontalOptions="End"
                                 VerticalOptions="Start"
-                                Margin="20" />
+                                Margin="20"
+                                InputTransparent="False" />
                             <Button
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=ToggleFavoriteCommand}"
                                 CommandParameter="{Binding .}"
@@ -88,7 +92,8 @@
                                 FontSize="24"
                                 HorizontalOptions="End"
                                 VerticalOptions="Start"
-                                Margin="20">
+                                Margin="20"
+                                InputTransparent="False">
                                 <Button.Text>
                                     <MultiBinding Converter="{StaticResource CatFavoriteStatusConverter}">
                                         <Binding Path="." />

@@ -93,6 +93,9 @@
 	  <MauiXaml Update="Controls\ZoomableImage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Controls\ZoomableWebDBImage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Controls\ZoomContainer.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

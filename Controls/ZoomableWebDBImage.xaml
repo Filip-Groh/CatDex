@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CatDex.Controls.ZoomableWebDBImage"
+             x:Name="this">
+    <Grid>
+        <ScrollView x:Name="ScrollContainer"
+                    Orientation="Both"
+                    HorizontalScrollBarVisibility="Never"
+                    VerticalScrollBarVisibility="Never">
+            <Image x:Name="DisplayImage"
+                   Aspect="AspectFit"
+                   HorizontalOptions="Fill"
+                   VerticalOptions="Fill" />
+        </ScrollView>
+
+        <Slider x:Name="ZoomSlider"
+                Minimum="1"
+                Maximum="4"
+                Value="1"
+                ValueChanged="OnZoomChanged"
+                WidthRequest="200"
+                HorizontalOptions="Center"
+                VerticalOptions="End"
+                Margin="0,0,0,20"
+                MinimumTrackColor="{DynamicResource Primary}"
+                MaximumTrackColor="#80FFFFFF"
+                ThumbColor="{DynamicResource Primary}"
+                InputTransparent="False" />
+    </Grid>
+</ContentView>

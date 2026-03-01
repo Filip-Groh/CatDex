@@ -9,10 +9,10 @@
              BackgroundColor="Black">
 
     <Grid>
-        <controls:WebDBImage Url="{Binding ImageUrl}" 
-                             ImageData="{Binding ImageData}"
-                             VerticalOptions="Center"
-                             HorizontalOptions="Center"/>
+        <controls:ZoomableWebDBImage Url="{Binding ImageUrl}" 
+                                     ImageData="{Binding ImageData}"
+                                     VerticalOptions="Fill"
+                                     HorizontalOptions="Fill"/>
 
         <Button Text="✕"
                 Command="{Binding CloseCommand}"
@@ -24,7 +24,8 @@
                 FontSize="24"
                 HorizontalOptions="End"
                 VerticalOptions="Start"
-                Margin="20"/>
+                Margin="20"
+                InputTransparent="False"/>
 
         <Button Text="⬇"
                 Command="{Binding DownloadCommand}"
@@ -36,10 +37,7 @@
                 FontSize="24"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
-                Margin="20"/>
-
-        <Grid.GestureRecognizers>
-            <TapGestureRecognizer Command="{Binding CloseCommand}"/>
-        </Grid.GestureRecognizers>
+                Margin="20"
+                InputTransparent="False"/>
     </Grid>
 </ContentPage>

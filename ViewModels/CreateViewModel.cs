@@ -116,12 +116,6 @@ namespace CatDex.ViewModels
                 ErrorMessage = null;
                 SuccessMessage = null;
 
-                if (string.IsNullOrWhiteSpace(CatId))
-                {
-                    ErrorMessage = "Please enter a Cat ID";
-                    return;
-                }
-
                 if (ImageBytes == null || ImageBytes.Length == 0)
                 {
                     ErrorMessage = "Please select an image";
@@ -130,9 +124,11 @@ namespace CatDex.ViewModels
 
                 IsBusy = true;
 
+                var generatedId = $"custom_{Guid.NewGuid():N}";
+
                 var customCat = new CustomCatDTO
                 {
-                    Id = CatId,
+                    Id = generatedId,
                     Width = Width,
                     Height = Height,
                     Bytes = ImageBytes,
