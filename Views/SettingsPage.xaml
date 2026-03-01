@@ -33,6 +33,60 @@
             </Border>
 
             <Label 
+                Text="Image Caching"
+                FontSize="24"
+                FontAttributes="Bold"
+                HorizontalOptions="Center" 
+                Margin="0,20,0,10"/>
+
+            <Border 
+                StrokeThickness="2"
+                Padding="20"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10"/>
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <HorizontalStackLayout Spacing="15" HorizontalOptions="Center">
+                        <Label 
+                            Text="Cache Favorites Only"
+                            FontSize="16"
+                            VerticalOptions="Center"/>
+                        <Switch 
+                            IsToggled="{Binding CacheAllImages}"
+                            VerticalOptions="Center"/>
+                        <Label 
+                            Text="Cache All Images"
+                            FontSize="16"
+                            VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Progress bar for caching -->
+                    <VerticalStackLayout 
+                        Spacing="5" 
+                        IsVisible="{Binding IsCaching}"
+                        Margin="0,10,0,0">
+                        <Label 
+                            FontSize="14"
+                            HorizontalOptions="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Caching images: "/>
+                                    <Span Text="{Binding CachingProgress}"/>
+                                    <Span Text=" / "/>
+                                    <Span Text="{Binding CachingTotal}"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <ProgressBar 
+                            Progress="{Binding CachingProgressRatio}"
+                            ProgressColor="{StaticResource Primary}"
+                            HeightRequest="8"/>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label 
                 Text="Database Statistics"
                 FontSize="24"
                 FontAttributes="Bold"
@@ -100,6 +154,66 @@
                             TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"/>
                         <Label 
                             Text="{Binding CreatedCats}"
+                            FontSize="32"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border 
+                    StrokeThickness="2"
+                    Padding="20"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10"/>
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="5">
+                        <Label 
+                            Text="Total Stored Images"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"/>
+                        <Label 
+                            Text="{Binding TotalStoredImages}"
+                            FontSize="32"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border 
+                    StrokeThickness="2"
+                    Padding="20"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10"/>
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="5">
+                        <Label 
+                            Text="User Created Images"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"/>
+                        <Label 
+                            Text="{Binding UserCreatedImages}"
+                            FontSize="32"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border 
+                    StrokeThickness="2"
+                    Padding="20"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10"/>
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="5">
+                        <Label 
+                            Text="Cached Images"
+                            FontSize="16"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"/>
+                        <Label 
+                            Text="{Binding CachedImages}"
                             FontSize="32"
                             FontAttributes="Bold"
                             HorizontalOptions="Center"/>

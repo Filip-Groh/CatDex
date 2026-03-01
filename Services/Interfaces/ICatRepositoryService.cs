@@ -15,5 +15,8 @@ namespace CatDex.Services.Interfaces {
         public Task<Cat> DeleteCatAsync(string id);
         public Task<Cat> SetCatIsFavorite(string id, bool isFavorite);
         public Task<int> DeleteNonCreatedNonFavoriteCatsAsync();
+        public Task<Cat> StoreCatImageAsync(string catId, byte[] imageBytes);
+        public Task DeleteNonFavoriteCachedImagesAsync();
+        public Task<(int total, int current)> CacheAllImagesAsync(IProgress<(int total, int current)> progress, CancellationToken cancellationToken);
     }
 }

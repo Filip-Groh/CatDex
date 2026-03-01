@@ -180,6 +180,7 @@ namespace CatDex.Services {
                 Width = cat.Width,
                 Height = cat.Height,
                 IsFavorite = false,
+                IsUserCreated = false,
                 InvalidationDate = DateTime.Now.AddDays(1),
             };
 
@@ -188,7 +189,7 @@ namespace CatDex.Services {
                 var breeds = await _db.Breeds
                     .Where(b => breedIds.Contains(b.Id))
                     .ToArrayAsync();
-                
+
                 createdCat.Breeds = breeds;
             }
 
@@ -208,6 +209,7 @@ namespace CatDex.Services {
                 Width = cat.Width,
                 Height = cat.Height,
                 IsFavorite = false,
+                IsUserCreated = true,
                 InvalidationDate = null,
             };
 
@@ -296,6 +298,55 @@ namespace CatDex.Services {
             await _db.SaveChangesAsync();
 
             return count;
+        }
+
+        public async Task<Cat> StoreCatImageAsync(string catId, byte[] imageBytes) {
+            var existingCat = await _db.Cats
+                .Include(cat => cat.StoredImage)
+                .FirstOrDefaultAsync(cat => cat.Id == catId);
+
+            if (existingCat == null) {
+                throw new InvalidOperationException($"Cat with ID {catId} not found.");
+            }
+
+            if (existingCat.StoredImage != null) {
+                existingCat.StoredImage.Bytes = imageBytes;
+            } else {
+                var image = new ImageData {
+                    Id = catId,
+                    Bytes = imageBytes,
+                    Cat = existingCat
+                };
+
+                existingCat.StoredImage = image;
+                _db.Images.Add(image);
+            }
+
+            await _db.SaveChangesAsync();
+
+            _db.Entry(existingCat).State = EntityState.Detached;
+
+            return existingCat;
+        }
+
+        public async Task DeleteCatImageAsync(string catId) {
+            var image = await _db.Images.FindAsync(catId);
+
+            if (image != null) {
+                _db.Images.Remove(image);
+                await _db.SaveChangesAsync();
+            }
+        }
+
+        public async Task<ICollection<Cat>> GetCatsWithoutImagesAsync() {
+            var cats = await _db.Cats
+                .AsNoTracking()
+                .Include(cat => cat.Breeds)
+                .Include(cat => cat.StoredImage)
+                .Where(cat => !cat.IsUserCreated && cat.StoredImage == null)
+                .ToListAsync();
+
+            return cats;
         }
     }
 }

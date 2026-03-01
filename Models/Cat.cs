@@ -7,6 +7,8 @@ namespace CatDex.Models {
 
         public bool IsFavorite { get; set; }
 
+        public bool IsUserCreated { get; set; }
+
         public string? Url { get; set; }
 
         public int Width { get; set; }

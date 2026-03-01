@@ -66,6 +66,22 @@ namespace CatDex.ViewModels {
                 if (!wasAlreadyStored) {
                     StoredCatsFavoriteStatus[storedCat.Id] = storedCat.IsFavorite;
                     OnPropertyChanged(nameof(StoredCatsFavoriteStatus));
+
+                    // Cache image if "cache all" is enabled
+                    var preference = Preferences.Get("store_images_preference", "favorites");
+                    if (preference == "all" && storedCat.StoredImage == null && !storedCat.IsUserCreated) {
+                        _ = Task.Run(async () => {
+                            try {
+                                if (!string.IsNullOrEmpty(storedCat.Url)) {
+                                    using var httpClient = new HttpClient();
+                                    var imageBytes = await httpClient.GetByteArrayAsync(storedCat.Url);
+                                    await _repository.StoreCatImageAsync(storedCat.Id, imageBytes);
+                                }
+                            } catch (Exception ex) {
+                                Debug.WriteLine($"Failed to cache image for cat {storedCat.Id}: {ex.Message}");
+                            }
+                        });
+                    }
                 }
             }
         }

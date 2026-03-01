@@ -6,6 +6,7 @@ namespace CatDex.Services {
     public class CatRepositoryService : ICatRepositoryService {
         private readonly IDataService _data;
         private readonly IApiService _api;
+        private const string StoreImagesKey = "store_images_preference";
 
         public CatRepositoryService(IDataService data, IApiService api) {
             _data = data;
@@ -83,11 +84,20 @@ namespace CatDex.Services {
                 return cat;
             }
 
+            Cat storedCat;
             if (cat?.InvalidationDate < DateTime.Now) {
-                return await _data.UpdateCatAsync(id, fetchedCat);
+                storedCat = await _data.UpdateCatAsync(id, fetchedCat);
             } else {
-                return await _data.StoreCatAsync(fetchedCat);
+                storedCat = await _data.StoreCatAsync(fetchedCat);
             }
+
+            var preference = Preferences.Get(StoreImagesKey, "favorites");
+            if ((preference == "all" || (preference == "favorites" && storedCat.IsFavorite)) && 
+                storedCat.StoredImage == null && !storedCat.IsUserCreated) {
+                await DownloadAndStoreCatImageAsync(storedCat);
+            }
+
+            return storedCat;
         }
 
         public async Task<ICollection<Cat>> GetStoredCatsAsync(string? breedId = null) {
@@ -146,11 +156,19 @@ namespace CatDex.Services {
 
             var fetchedCat = await _api.GetCatAsync(id) ?? throw new Exception($"Cat with id {id} not found in API.");
 
+            Cat storedCat;
             if (cat?.InvalidationDate < DateTime.Now) {
-                return await _data.UpdateCatAsync(id, fetchedCat);
+                storedCat = await _data.UpdateCatAsync(id, fetchedCat);
             } else {
-                return await _data.StoreCatAsync(fetchedCat);
+                storedCat = await _data.StoreCatAsync(fetchedCat);
             }
+
+            var preference = Preferences.Get(StoreImagesKey, "favorites");
+            if (preference == "all" && storedCat.StoredImage == null && !storedCat.IsUserCreated) {
+                await DownloadAndStoreCatImageAsync(storedCat);
+            }
+
+            return storedCat;
         }
 
         public async Task<Cat> CreateCatAsync(CustomCatDTO cat) {
@@ -162,11 +180,75 @@ namespace CatDex.Services {
         }
 
         public async Task<Cat> SetCatIsFavorite(string id, bool isFavorite) {
-            return await _data.SetCatIsFavorite(id, isFavorite);
+            var cat = await _data.SetCatIsFavorite(id, isFavorite);
+
+            if (isFavorite) {
+                // Always cache image when favoriting
+                if (cat.StoredImage == null && !cat.IsUserCreated) {
+                    await DownloadAndStoreCatImageAsync(cat);
+                }
+            } else {
+                // Delete image when unfavoriting (if caching favorites only)
+                var preference = Preferences.Get(StoreImagesKey, "favorites");
+                if (preference == "favorites" && cat.StoredImage != null && !cat.IsUserCreated) {
+                    await _data.DeleteCatImageAsync(cat.Id);
+                }
+            }
+
+            return cat;
+        }
+
+        private async Task DownloadAndStoreCatImageAsync(Cat cat) {
+            if (string.IsNullOrEmpty(cat.Url))
+                return;
+
+            try {
+                using var httpClient = new HttpClient();
+                var imageBytes = await httpClient.GetByteArrayAsync(cat.Url);
+                await _data.StoreCatImageAsync(cat.Id, imageBytes);
+            }
+            catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine($"Failed to download and store image for cat {cat.Id}: {ex.Message}");
+            }
+        }
+
+        public async Task DeleteNonFavoriteCachedImagesAsync() {
+            var cats = await _data.GetCatsAsync();
+
+            foreach (var cat in cats) {
+                if (!cat.IsFavorite && !cat.IsUserCreated && cat.StoredImage != null) {
+                    await _data.DeleteCatImageAsync(cat.Id);
+                }
+            }
+        }
+
+        public async Task<(int total, int current)> CacheAllImagesAsync(IProgress<(int total, int current)> progress, CancellationToken cancellationToken) {
+            var catsWithoutImages = await _data.GetCatsWithoutImagesAsync();
+            var total = catsWithoutImages.Count;
+            var current = 0;
+
+            foreach (var cat in catsWithoutImages) {
+                if (cancellationToken.IsCancellationRequested) {
+                    break;
+                }
+
+                if (!string.IsNullOrEmpty(cat.Url)) {
+                    await DownloadAndStoreCatImageAsync(cat);
+                }
+
+                current++;
+                progress?.Report((total, current));
+            }
+
+            return (total, current);
         }
 
         public async Task<int> DeleteNonCreatedNonFavoriteCatsAsync() {
             return await _data.DeleteNonCreatedNonFavoriteCatsAsync();
+        }
+
+        public async Task<Cat> StoreCatImageAsync(string catId, byte[] imageBytes) {
+            return await _data.StoreCatImageAsync(catId, imageBytes);
         }
     }
 }
