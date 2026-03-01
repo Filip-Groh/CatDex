@@ -35,8 +35,12 @@ namespace CatDex.ViewModels {
 
             try {
                 Cat = await _repository.GetCatByIdAsync(CatId);
-            }
-            finally {
+            } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                System.Diagnostics.Debug.WriteLine($"Rate limit hit when loading cat {CatId}.");
+                await Shell.Current.DisplayAlert("Rate Limit", "API rate limit exceeded. Please try again later.", "OK");
+            } catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine($"Error loading cat {CatId}: {ex.Message}");
+            } finally {
                 IsLoading = false;
             }
         }
@@ -46,9 +50,14 @@ namespace CatDex.ViewModels {
             if (Cat == null)
                 return;
 
-            Cat.IsFavorite = !Cat.IsFavorite;
-            await _repository.SetCatIsFavorite(Cat.Id, Cat.IsFavorite);
-            OnPropertyChanged(nameof(Cat));
+            try {
+                Cat.IsFavorite = !Cat.IsFavorite;
+                await _repository.SetCatIsFavorite(Cat.Id, Cat.IsFavorite);
+                OnPropertyChanged(nameof(Cat));
+            } catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine($"Error toggling favorite: {ex.Message}");
+                Cat.IsFavorite = !Cat.IsFavorite; // Revert on error
+            }
         }
 
         [RelayCommand]

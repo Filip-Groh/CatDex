@@ -1,6 +1,7 @@
 ﻿using CatDex.Models;
 using CatDex.Models.DTOs;
 using CatDex.Services.Interfaces;
+using System.Diagnostics;
 
 namespace CatDex.Services {
     public class CatRepositoryService : ICatRepositoryService {
@@ -37,6 +38,12 @@ namespace CatDex.Services {
                 } else {
                     return await _data.CreateBreedAsync(fetchedBreed);
                 }
+            } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                Debug.WriteLine($"Rate limit hit when fetching breed {id}, using cached data if available.");
+                if (breed != null) {
+                    return breed;
+                }
+                throw new Exception("API rate limit exceeded. Please try again later.", ex);
             } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                 if (breed != null) {
                     return breed;
@@ -62,6 +69,9 @@ namespace CatDex.Services {
                     }
 
                     return createdBreeds;
+                } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                    Debug.WriteLine("Rate limit hit when fetching breeds, returning empty collection.");
+                    return Array.Empty<Breed>();
                 } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                     return Array.Empty<Breed>();
                 }
@@ -78,6 +88,9 @@ namespace CatDex.Services {
                         if (fetchedBreed != null) {
                             return await _data.UpdateBreedAsync(breed.Id, fetchedBreed);
                         }
+                    } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                        Debug.WriteLine($"Rate limit hit when updating breed {breed.Id}, using cached data.");
+                        return breed;
                     } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                         // Return cached breed if API call fails
                         return breed;
@@ -97,8 +110,26 @@ namespace CatDex.Services {
 
             try {
                 return await _api.GetCatsAsync(page, limit);
+            } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                Debug.WriteLine($"Rate limit hit when fetching new cats (page {page}), returning empty collection.");
+                return Array.Empty<CatDTO>();
             } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                 return Array.Empty<CatDTO>();
+            }
+        }
+
+        public async Task<DetailedCatDTO> GetDetailedCatAsync(string id) {
+            if (!_connectivity.IsConnected) {
+                throw new Exception("No internet connection.");
+            }
+
+            try {
+                return await _api.GetCatAsync(id);
+            } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                Debug.WriteLine($"Rate limit hit when fetching detailed cat {id}.");
+                throw new Exception("API rate limit exceeded. Please try again later.", ex);
+            } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
+                throw new Exception("Failed to fetch detailed cat data.", ex);
             }
         }
 
@@ -126,6 +157,9 @@ namespace CatDex.Services {
             DetailedCatDTO? fetchedCat = null;
             try {
                 fetchedCat = await _api.GetCatAsync(id);
+            } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                Debug.WriteLine($"Rate limit hit when fetching cat {id}, using cached data if available.");
+                return cat;
             } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                 return cat;
             }
@@ -166,6 +200,9 @@ namespace CatDex.Services {
                         if (fetchedCat != null) {
                             return await _data.UpdateCatAsync(cat.Id, fetchedCat);
                         }
+                    } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                        Debug.WriteLine($"Rate limit hit when updating cat {cat.Id}, using cached data.");
+                        return cat;
                     } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                         // Return cached cat if API call fails
                     }
@@ -194,6 +231,9 @@ namespace CatDex.Services {
                         if (fetchedCat != null) {
                             return await _data.UpdateCatAsync(cat.Id, fetchedCat);
                         }
+                    } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                        Debug.WriteLine($"Rate limit hit when updating favorite cat {cat.Id}, using cached data.");
+                        return cat;
                     } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                         // Return cached cat if API call fails
                     }
@@ -230,6 +270,12 @@ namespace CatDex.Services {
             DetailedCatDTO? fetchedCat = null;
             try {
                 fetchedCat = await _api.GetCatAsync(id);
+            } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                Debug.WriteLine($"Rate limit hit when storing cat {id}.");
+                if (cat != null) {
+                    return cat;
+                }
+                throw new Exception("API rate limit exceeded. Please try again later.", ex);
             } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                 if (cat != null) {
                     return cat;

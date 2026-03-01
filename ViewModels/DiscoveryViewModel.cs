@@ -12,15 +12,18 @@ namespace CatDex.ViewModels {
         private readonly IConnectivityService _connectivity;
         private int _currentPage = 0;
 
-        public ObservableCollection<CatDTO> Cats { get; } = new();
+        public ObservableCollection<DetailedCatDTO> Cats { get; } = new();
         public Dictionary<string, bool> StoredCatsFavoriteStatus { get; } = new();
         public HashSet<string> PreviouslyStoredCats { get; } = new();
+
+        [ObservableProperty]
+        public partial int StorageStatusVersion { get; set; }
 
         [ObservableProperty]
         public partial bool IsBusy { get; set; }
 
         [ObservableProperty]
-        public partial CatDTO? SelectedCat { get; set; }
+        public partial DetailedCatDTO? SelectedCat { get; set; }
 
         [ObservableProperty]
         public partial bool IsOffline { get; set; }
@@ -63,8 +66,45 @@ namespace CatDex.ViewModels {
                         PreviouslyStoredCats.Add(storedCat.Id);
                     }
 
+                    // Convert basic CatDTO to DetailedCatDTO if needed
                     foreach (var cat in newCats) {
-                        Cats.Add(cat);
+                        DetailedCatDTO detailedCat;
+
+                        if (cat is DetailedCatDTO detailed) {
+                            // Already detailed from search API
+                            detailedCat = detailed;
+                            Debug.WriteLine($"Cat {detailedCat.Id} from search: Breeds count = {detailedCat.Breeds?.Count ?? 0}");
+                            if (detailedCat.Breeds != null && detailedCat.Breeds.Count > 0) {
+                                Debug.WriteLine($"  First breed: {detailedCat.Breeds.First().Name}");
+                            } else {
+                                Debug.WriteLine($"  No breeds found, fetching detailed info...");
+                                try {
+                                    detailedCat = await _repository.GetDetailedCatAsync(cat.Id);
+                                    Debug.WriteLine($"  After detailed fetch: Breeds count = {detailedCat.Breeds?.Count ?? 0}");
+                                } catch (Exception ex) {
+                                    Debug.WriteLine($"  Failed to fetch: {ex.Message}");
+                                }
+                            }
+                        } else {
+                            // Need to fetch detailed info
+                            Debug.WriteLine($"Cat {cat.Id}: Basic CatDTO, fetching detailed...");
+                            try {
+                                detailedCat = await _repository.GetDetailedCatAsync(cat.Id);
+                                Debug.WriteLine($"  Breeds count = {detailedCat.Breeds?.Count ?? 0}");
+                            } catch (Exception ex) {
+                                Debug.WriteLine($"  Failed to fetch detailed cat {cat.Id}: {ex.Message}");
+                                // Fallback: create DetailedCatDTO without breeds
+                                detailedCat = new DetailedCatDTO {
+                                    Id = cat.Id,
+                                    Url = cat.Url,
+                                    Width = cat.Width,
+                                    Height = cat.Height,
+                                    Breeds = new List<BreedDTO>()
+                                };
+                            }
+                        }
+
+                        Cats.Add(detailedCat);
                     }
 
                     _currentPage++;
@@ -83,7 +123,7 @@ namespace CatDex.ViewModels {
 
                     if (!wasAlreadyStored) {
                         StoredCatsFavoriteStatus[storedCat.Id] = storedCat.IsFavorite;
-                        OnPropertyChanged(nameof(StoredCatsFavoriteStatus));
+                        StorageStatusVersion++;
                     }
                 } catch (Exception ex) {
                     Debug.WriteLine($"Failed to store cat: {ex.Message}");
@@ -104,7 +144,7 @@ namespace CatDex.ViewModels {
         }
 
         [RelayCommand]
-        async Task ToggleFavorite(CatDTO cat) {
+        async Task ToggleFavorite(DetailedCatDTO cat) {
             if (cat == null || !IsCatStored(cat.Id))
                 return;
 
@@ -114,7 +154,7 @@ namespace CatDex.ViewModels {
                 await _repository.SetCatIsFavorite(cat.Id, newIsFavorite);
 
                 StoredCatsFavoriteStatus[cat.Id] = newIsFavorite;
-                OnPropertyChanged(nameof(StoredCatsFavoriteStatus));
+                StorageStatusVersion++;
             } catch (Exception ex) {
                 Debug.WriteLine($"Error toggling favorite: {ex.Message}");
             }

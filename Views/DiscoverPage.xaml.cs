@@ -14,9 +14,9 @@ public partial class DiscoverPage : ContentPage
     {
         var collectionView = (CollectionView)sender;
         var viewModel = (DiscoveryViewModel)BindingContext;
-        
+
         int currentIndex = e.FirstVisibleItemIndex;
-        
+
         if (currentIndex >= 0 && currentIndex < viewModel.Cats.Count)
         {
             var prevSelectedCat = viewModel.SelectedCat;

@@ -25,7 +25,7 @@
         </CollectionView.ItemsLayout>
 
         <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="dtos:CatDTO">
+            <DataTemplate x:DataType="dtos:DetailedCatDTO">
                 <Grid HeightRequest="{Binding Height, Source={RelativeSource AncestorType={x:Type CollectionView}}}">
                     <controls:WebDBImage 
                         Url="{Binding Url}" 
@@ -48,15 +48,22 @@
                             <MultiBinding Converter="{StaticResource CatPreviouslyStoredConverter}">
                                 <Binding Path="." />
                                 <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" />
+                                <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" Path="StorageStatusVersion" />
                             </MultiBinding>
                         </Button.IsVisible>
                     </Button>
                     <VerticalStackLayout 
                         VerticalOptions="End" 
                         Padding="20">
+                        <Label 
+                            FontSize="24"
+                            FontAttributes="Bold"
+                            TextColor="White"
+                            HorizontalOptions="Center"
+                            Margin="0,0,0,10"
+                            Text="{Binding Breeds, Converter={StaticResource FirstBreedNameConverter}}"/>
                         <HorizontalStackLayout
                             HorizontalOptions="Center">
-                            <Label Text="{Binding Id, StringFormat='Cat ID: {0}'}" TextColor="White" FontSize="18" />
                             <Button
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=DownloadImageCommand}"
                                 CommandParameter="{Binding .}"
@@ -86,14 +93,21 @@
                                     <MultiBinding Converter="{StaticResource CatFavoriteStatusConverter}">
                                         <Binding Path="." />
                                         <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" />
+                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" Path="StorageStatusVersion" />
                                     </MultiBinding>
                                 </Button.Text>
-                                <Button.IsVisible>
+                                <Button.IsEnabled>
                                     <MultiBinding Converter="{StaticResource CatIsStoredConverter}">
                                         <Binding Path="." />
                                         <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" />
+                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" Path="StorageStatusVersion" />
                                     </MultiBinding>
-                                </Button.IsVisible>
+                                </Button.IsEnabled>
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button" Binding="{Binding IsEnabled, Source={RelativeSource Self}}" Value="False">
+                                        <Setter Property="Opacity" Value="0.3" />
+                                    </DataTrigger>
+                                </Button.Triggers>
                             </Button>
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
