@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:CatDex.ViewModels"
              x:Class="CatDex.Views.SettingsPage"
-             Title="Settings">
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20">
+             x:DataType="viewmodels:SettingsViewModel">
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                 Command="{Binding RefreshCommand}">
+        <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
             <Label 
                 Text="Appearance"
                 FontSize="24"
                 FontAttributes="Bold"
                 HorizontalOptions="Center" 
-                Margin="0,20,0,10"/>
+                Margin="0,0,0,10"/>
 
             <Border 
-                StrokeThickness="2"
-                Padding="20"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10"/>
-                </Border.StrokeShape>
+                StrokeThickness="1"
+                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                StrokeShape="RoundRectangle 10"
+                Padding="15"
+                Margin="0,0,0,10">
                 <VerticalStackLayout Spacing="10">
                     <Label 
                         Text="Theme"
-                        FontSize="18"
+                        FontSize="16"
                         FontAttributes="Bold"/>
                     <Picker 
                         ItemsSource="{Binding ThemeOptions}"
@@ -37,31 +40,29 @@
                 FontSize="24"
                 FontAttributes="Bold"
                 HorizontalOptions="Center" 
-                Margin="0,20,0,10"/>
+                Margin="0,0,0,10"/>
 
             <Border 
-                StrokeThickness="2"
-                Padding="20"
-                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10"/>
-                </Border.StrokeShape>
+                StrokeThickness="1"
+                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                StrokeShape="RoundRectangle 10"
+                Padding="15"
+                Margin="0,0,0,10">
                 <VerticalStackLayout Spacing="10">
                     <HorizontalStackLayout Spacing="15" HorizontalOptions="Center">
                         <Label 
-                            Text="Cache Favorites Only"
+                            Text="Favorites Only"
                             FontSize="16"
                             VerticalOptions="Center"/>
                         <Switch 
                             IsToggled="{Binding CacheAllImages}"
                             VerticalOptions="Center"/>
                         <Label 
-                            Text="Cache All Images"
+                            Text="All Images"
                             FontSize="16"
                             VerticalOptions="Center"/>
                     </HorizontalStackLayout>
 
-                    <!-- Progress bar for caching -->
                     <VerticalStackLayout 
                         Spacing="5" 
                         IsVisible="{Binding IsCaching}"
@@ -91,7 +92,7 @@
                 FontSize="24"
                 FontAttributes="Bold"
                 HorizontalOptions="Center" 
-                Margin="0,20,0,10"/>
+                Margin="0,0,0,10"/>
 
             <ActivityIndicator 
                 IsRunning="{Binding IsBusy}"
@@ -101,17 +102,16 @@
 
             <VerticalStackLayout Spacing="15" IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
                 <Border 
-                    StrokeThickness="2"
-                    Padding="20"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10"/>
-                    </Border.StrokeShape>
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15"
+                    Margin="0,0,0,10">
                     <VerticalStackLayout Spacing="5">
                         <Label 
                             Text="Total Cats"
                             FontSize="16"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"/>
+                            FontAttributes="Bold"/>
                         <Label 
                             Text="{Binding TotalCats}"
                             FontSize="32"
@@ -121,17 +121,16 @@
                 </Border>
 
                 <Border 
-                    StrokeThickness="2"
-                    Padding="20"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10"/>
-                    </Border.StrokeShape>
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15"
+                    Margin="0,0,0,10">
                     <VerticalStackLayout Spacing="5">
                         <Label 
                             Text="Favorite Cats"
                             FontSize="16"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"/>
+                            FontAttributes="Bold"/>
                         <Label 
                             Text="{Binding FavoriteCats}"
                             FontSize="32"
@@ -141,17 +140,16 @@
                 </Border>
 
                 <Border 
-                    StrokeThickness="2"
-                    Padding="20"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10"/>
-                    </Border.StrokeShape>
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15"
+                    Margin="0,0,0,10">
                     <VerticalStackLayout Spacing="5">
                         <Label 
                             Text="Created Cats"
                             FontSize="16"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"/>
+                            FontAttributes="Bold"/>
                         <Label 
                             Text="{Binding CreatedCats}"
                             FontSize="32"
@@ -161,17 +159,16 @@
                 </Border>
 
                 <Border 
-                    StrokeThickness="2"
-                    Padding="20"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10"/>
-                    </Border.StrokeShape>
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15"
+                    Margin="0,0,0,10">
                     <VerticalStackLayout Spacing="5">
                         <Label 
                             Text="Total Stored Images"
                             FontSize="16"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"/>
+                            FontAttributes="Bold"/>
                         <Label 
                             Text="{Binding TotalStoredImages}"
                             FontSize="32"
@@ -181,17 +178,16 @@
                 </Border>
 
                 <Border 
-                    StrokeThickness="2"
-                    Padding="20"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10"/>
-                    </Border.StrokeShape>
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15"
+                    Margin="0,0,0,10">
                     <VerticalStackLayout Spacing="5">
                         <Label 
                             Text="User Created Images"
                             FontSize="16"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"/>
+                            FontAttributes="Bold"/>
                         <Label 
                             Text="{Binding UserCreatedImages}"
                             FontSize="32"
@@ -201,17 +197,16 @@
                 </Border>
 
                 <Border 
-                    StrokeThickness="2"
-                    Padding="20"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource Gray900}}">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10"/>
-                    </Border.StrokeShape>
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                    StrokeShape="RoundRectangle 10"
+                    Padding="15"
+                    Margin="0,0,0,10">
                     <VerticalStackLayout Spacing="5">
                         <Label 
                             Text="Cached Images"
                             FontSize="16"
-                            TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray200}}"/>
+                            FontAttributes="Bold"/>
                         <Label 
                             Text="{Binding CachedImages}"
                             FontSize="32"
@@ -221,19 +216,14 @@
                 </Border>
 
                 <Button 
-                    Text="Refresh"
-                    Command="{Binding RefreshCommand}"
-                    HorizontalOptions="Center"
-                    Margin="0,20,0,0"/>
-
-                <Button 
                     Text="Delete Non-Created and Non-Favorite Cats"
                     Command="{Binding DeleteNonCreatedNonFavoriteCommand}"
-                    HorizontalOptions="Center"
                     BackgroundColor="#DC3545"
                     TextColor="White"
-                    Margin="0,10,0,0"/>
+                    FontAttributes="Bold"
+                    Margin="0,10,0,20"/>
             </VerticalStackLayout>
         </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </RefreshView>
 </ContentPage>

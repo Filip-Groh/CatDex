@@ -4,8 +4,7 @@
              xmlns:viewmodels="clr-namespace:CatDex.ViewModels"
              xmlns:models="clr-namespace:CatDex.Models"
              x:Class="CatDex.Views.CreatePage"
-             x:DataType="viewmodels:CreateViewModel"
-             Title="Create Cat">
+             x:DataType="viewmodels:CreateViewModel">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
@@ -25,12 +24,23 @@
                 Margin="0,0,0,10">
                 <VerticalStackLayout Spacing="10">
 
-                    <Label Text="Select Image" FontSize="16" FontAttributes="Bold" />
-                    <Button 
-                        Text="Pick Image"
-                        Command="{Binding PickImageCommand}"
-                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
-                        HorizontalOptions="Start" />
+                    <Grid>
+                        <Label Text="Select Image" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="Start" />
+                        <Button 
+                            ImageSource="upload.svg"
+                            Command="{Binding PickImageCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                            HorizontalOptions="End"
+                            WidthRequest="50"
+                            HeightRequest="50"
+                            CornerRadius="25"
+                            Padding="10"
+                            BackgroundColor="Transparent">
+                            <Button.TextColor>
+                                <AppThemeBinding Light="Black" Dark="White" />
+                            </Button.TextColor>
+                        </Button>
+                    </Grid>
 
                     <Image 
                         Source="{Binding ImageSource}"
@@ -57,42 +67,58 @@
                 Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
                 StrokeShape="RoundRectangle 10"
                 Padding="15"
-                Margin="0,0,0,10"
-                IsVisible="{Binding AvailableBreeds.Count, Converter={StaticResource IsNotZeroConverter}}">
+                Margin="0,0,0,10">
                 <VerticalStackLayout Spacing="10">
 
                     <Label Text="Select Breeds (Optional)" FontSize="16" FontAttributes="Bold" />
 
-                    <CollectionView 
-                        ItemsSource="{Binding AvailableBreeds}"
-                        SelectionMode="None">
-                        <CollectionView.ItemTemplate>
+                    <!-- Selected Breeds List (Vertical) -->
+                    <VerticalStackLayout Spacing="8">
+                        <BindableLayout.ItemsSource>
+                            <Binding Path="SelectedBreeds" />
+                        </BindableLayout.ItemsSource>
+                        <BindableLayout.ItemTemplate>
                             <DataTemplate x:DataType="models:Breed">
                                 <Border 
-                                    StrokeThickness="1"
-                                    Stroke="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray500}}"
-                                    StrokeShape="RoundRectangle 5"
-                                    Padding="10"
-                                    Margin="0,5">
-                                    <HorizontalStackLayout>
-                                        <Button
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CreateViewModel}}, Path=ToggleBreedCommand}"
-                                            CommandParameter="{Binding .}"
-                                            ImageSource="add.svg"
-                                            WidthRequest="30"
-                                            HeightRequest="30"
-                                            CornerRadius="15"
-                                            Padding="5"
-                                            BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" />
+                                    StrokeThickness="0"
+                                    BackgroundColor="Transparent"
+                                    StrokeShape="RoundRectangle 15"
+                                    Padding="12,6">
+                                    <Grid>
                                         <Label 
                                             Text="{Binding Name}"
                                             VerticalOptions="Center"
-                                            Margin="10,0,0,0" />
-                                    </HorizontalStackLayout>
+                                            FontSize="14"
+                                            HorizontalOptions="Start"/>
+                                        <Button
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CreateViewModel}}, Path=RemoveBreedCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Text="×"
+                                            FontSize="18"
+                                            FontAttributes="Bold"
+                                            WidthRequest="24"
+                                            HeightRequest="24"
+                                            CornerRadius="12"
+                                            Padding="0"
+                                            BackgroundColor="Transparent"
+                                            VerticalOptions="Center"
+                                            HorizontalOptions="End">
+                                            <Button.TextColor>
+                                                <AppThemeBinding Light="Black" Dark="White" />
+                                            </Button.TextColor>
+                                        </Button>
+                                    </Grid>
                                 </Border>
                             </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <!-- Breed Picker (at the end) -->
+                    <Picker 
+                        ItemsSource="{Binding AvailableBreeds}"
+                        ItemDisplayBinding="{Binding Name}"
+                        Title="Select a Breed"
+                        SelectedIndexChanged="OnBreedSelected"/>
                 </VerticalStackLayout>
             </Border>
 
@@ -102,13 +128,7 @@
                 IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}"
                 Margin="0,10,0,0" />
 
-            <Label 
-                Text="{Binding SuccessMessage}"
-                TextColor="Green"
-                IsVisible="{Binding SuccessMessage, Converter={StaticResource IsNotNullConverter}}"
-                Margin="0,10,0,0" />
-
-            <Button 
+            <Button
                 Text="Create Cat"
                 Command="{Binding CreateCatCommand}"
                 IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"

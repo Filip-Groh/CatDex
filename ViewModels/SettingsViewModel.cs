@@ -33,6 +33,9 @@ namespace CatDex.ViewModels {
         public partial bool IsBusy { get; set; }
 
         [ObservableProperty]
+        public partial bool IsRefreshing { get; set; }
+
+        [ObservableProperty]
         public partial string SelectedTheme { get; set; }
 
         [ObservableProperty]
@@ -121,7 +124,11 @@ namespace CatDex.ViewModels {
 
         [RelayCommand]
         async Task Refresh() {
-            await LoadStatisticsAsync();
+            try {
+                await LoadStatisticsAsync();
+            } finally {
+                IsRefreshing = false;
+            }
         }
 
         [RelayCommand]

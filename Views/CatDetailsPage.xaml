@@ -6,7 +6,7 @@
              xmlns:controls="clr-namespace:CatDex.Controls"
              x:Class="CatDex.Views.CatDetailsPage"
              x:DataType="viewmodels:CatDetailsViewModel"
-             Title="Cat Details">
+             Title="Details">
 
     <Grid>
         <ActivityIndicator IsRunning="{Binding IsLoading}"
@@ -33,18 +33,24 @@
                                 WidthRequest="50"
                                 HeightRequest="50"
                                 CornerRadius="25"
-                                BackgroundColor="#80000000"
                                 Padding="10"
-                                ImageSource="{Binding Cat.IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"/>
+                                ImageSource="{Binding Cat.IsFavorite, Converter={StaticResource FavoriteToIconConverter}}">
+                                <Button.BackgroundColor>
+                                    <AppThemeBinding Light="White" Dark="#808080" />
+                                </Button.BackgroundColor>
+                            </Button>
 
                             <Button
                                 Command="{Binding DeleteCommand}"
                                 WidthRequest="50"
                                 HeightRequest="50"
                                 CornerRadius="25"
-                                BackgroundColor="#80000000"
                                 Padding="10"
-                                ImageSource="delete.svg"/>
+                                ImageSource="delete.svg">
+                                <Button.BackgroundColor>
+                                    <AppThemeBinding Light="White" Dark="#808080" />
+                                </Button.BackgroundColor>
+                            </Button>
                         </HorizontalStackLayout>
                     </Grid>
                 </Frame>
@@ -542,11 +548,6 @@
                         </CollectionView.ItemTemplate>
                     </CollectionView>
                 </VerticalStackLayout>
-
-                <Button Text="Back" 
-                        Command="{Binding GoBackCommand}"
-                        HorizontalOptions="Center"
-                        WidthRequest="200"/>
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

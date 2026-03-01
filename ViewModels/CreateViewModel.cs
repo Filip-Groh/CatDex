@@ -33,7 +33,7 @@ namespace CatDex.ViewModels
         public partial string? ErrorMessage { get; set; }
 
         [ObservableProperty]
-        public partial string? SuccessMessage { get; set; }
+        public partial bool IsBreedPickerVisible { get; set; }
 
         public ObservableCollection<Breed> AvailableBreeds { get; } = new();
         public ObservableCollection<Breed> SelectedBreeds { get; } = new();
@@ -114,7 +114,6 @@ namespace CatDex.ViewModels
             try
             {
                 ErrorMessage = null;
-                SuccessMessage = null;
 
                 if (ImageBytes == null || ImageBytes.Length == 0)
                 {
@@ -136,14 +135,17 @@ namespace CatDex.ViewModels
                 };
 
                 var createdCat = await _repository.CreateCatAsync(customCat);
-                SuccessMessage = $"Cat '{createdCat.Id}' created successfully!";
 
+                // Clear form
                 CatId = string.Empty;
                 Width = 500;
                 Height = 500;
                 ImageBytes = null;
                 ImageSource = null;
                 SelectedBreeds.Clear();
+
+                // Navigate to details page
+                await Shell.Current.GoToAsync($"{nameof(Views.CatDetailsPage)}?CatId={generatedId}");
             }
             catch (Exception ex)
             {
@@ -167,6 +169,21 @@ namespace CatDex.ViewModels
                 SelectedBreeds.Add(breed);
             }
             OnPropertyChanged(nameof(SelectedBreeds));
+        }
+
+        [RelayCommand]
+        void ToggleBreedPicker()
+        {
+            IsBreedPickerVisible = !IsBreedPickerVisible;
+        }
+
+        [RelayCommand]
+        void RemoveBreed(Breed breed)
+        {
+            if (SelectedBreeds.Contains(breed))
+            {
+                SelectedBreeds.Remove(breed);
+            }
         }
 
         public bool IsBreedSelected(Breed breed)

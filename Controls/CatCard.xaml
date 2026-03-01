@@ -10,6 +10,9 @@
         <Frame CornerRadius="8" 
                Padding="0"
                HasShadow="True">
+            <Frame.BackgroundColor>
+                <AppThemeBinding Light="White" Dark="#1E1E1E" />
+            </Frame.BackgroundColor>
             <Grid>
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding Source={x:Reference this}, Path=TappedCommand}"
@@ -66,9 +69,15 @@
                             WidthRequest="40"
                             HeightRequest="40"
                             CornerRadius="20"
-                            BackgroundColor="#80000000"
                             Padding="8"
-                            ImageSource="{Binding IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"/>
+                            ImageSource="{Binding IsFavorite, Converter={StaticResource FavoriteToIconConverter}}">
+                            <Button.BackgroundColor>
+                                <AppThemeBinding Light="White" Dark="Transparent" />
+                            </Button.BackgroundColor>
+                            <Button.TextColor>
+                                <AppThemeBinding Light="Black" Dark="White" />
+                            </Button.TextColor>
+                        </Button>
 
                         <Button
                             Command="{Binding Source={x:Reference this}, Path=DeleteCommand}"
@@ -76,9 +85,15 @@
                             WidthRequest="40"
                             HeightRequest="40"
                             CornerRadius="20"
-                            BackgroundColor="#80000000"
                             Padding="8"
-                            ImageSource="delete.svg"/>
+                            ImageSource="delete.svg">
+                            <Button.BackgroundColor>
+                                <AppThemeBinding Light="White" Dark="Transparent" />
+                            </Button.BackgroundColor>
+                            <Button.TextColor>
+                                <AppThemeBinding Light="Black" Dark="White" />
+                            </Button.TextColor>
+                        </Button>
                     </HorizontalStackLayout>
                 </Grid>
             </Grid>

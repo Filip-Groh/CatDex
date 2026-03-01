@@ -14,18 +14,25 @@
                    VerticalOptions="Fill" />
         </ScrollView>
 
-        <Slider x:Name="ZoomSlider"
-                Minimum="1"
-                Maximum="4"
-                Value="1"
-                ValueChanged="OnZoomChanged"
-                WidthRequest="200"
-                HorizontalOptions="Center"
-                VerticalOptions="End"
-                Margin="0,0,0,20"
-                MinimumTrackColor="{DynamicResource Primary}"
-                MaximumTrackColor="#80FFFFFF"
-                ThumbColor="{DynamicResource Primary}"
-                InputTransparent="False" />
+        <Frame HorizontalOptions="Center"
+               VerticalOptions="End"
+               Margin="0,0,0,20"
+               Padding="15,8"
+               CornerRadius="25"
+               HasShadow="False"
+               InputTransparent="False">
+            <Frame.BackgroundColor>
+                <AppThemeBinding Light="White" Dark="#808080" />
+            </Frame.BackgroundColor>
+            <Slider x:Name="ZoomSlider"
+                    Minimum="1"
+                    Maximum="4"
+                    Value="1"
+                    ValueChanged="OnZoomChanged"
+                    WidthRequest="200"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    InputTransparent="False" />
+        </Frame>
     </Grid>
 </ContentView>

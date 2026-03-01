@@ -6,7 +6,7 @@
              xmlns:controls="clr-namespace:CatDex.Controls"
              x:Class="CatDex.Views.DiscoverPage"
              x:DataType="viewmodels:DiscoveryViewModel"
-             Title="DiscoverPage">
+             BackgroundColor="White">
 
     <Grid>
         <CollectionView 
@@ -37,13 +37,15 @@
                         WidthRequest="50"
                         HeightRequest="50"
                         CornerRadius="25"
-                        BackgroundColor="#80000000"
                         Padding="10"
                         HorizontalOptions="Start"
                         VerticalOptions="Start"
                         Margin="20"
                         IsEnabled="False"
                         InputTransparent="False">
+                        <Button.BackgroundColor>
+                            <AppThemeBinding Light="White" Dark="#808080" />
+                        </Button.BackgroundColor>
                         <Button.IsVisible>
                             <MultiBinding Converter="{StaticResource CatPreviouslyStoredConverter}">
                                 <Binding Path="." />
@@ -52,20 +54,64 @@
                             </MultiBinding>
                         </Button.IsVisible>
                     </Button>
-                    <VerticalStackLayout 
-                        VerticalOptions="End" 
-                        Padding="20"
-                        InputTransparent="False">
+                    <Frame
+                        HorizontalOptions="Start"
+                        VerticalOptions="End"
+                        Margin="20"
+                        Padding="10,5"
+                        CornerRadius="5"
+                        HasShadow="False">
+                        <Frame.BackgroundColor>
+                            <AppThemeBinding Light="White" Dark="#808080" />
+                        </Frame.BackgroundColor>
                         <Label 
                             FontSize="24"
                             FontAttributes="Bold"
-                            TextColor="White"
-                            HorizontalOptions="Center"
-                            Margin="0,0,0,10"
-                            Text="{Binding Breeds, Converter={StaticResource FirstBreedNameConverter}}"/>
-                        <HorizontalStackLayout
-                            HorizontalOptions="Center"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            Text="{Binding Breeds, Converter={StaticResource FirstBreedNameConverter}}">
+                            <Label.TextColor>
+                                <AppThemeBinding Light="Black" Dark="White" />
+                            </Label.TextColor>
+                        </Label>
+                    </Frame>
+                    <VerticalStackLayout 
+                        HorizontalOptions="End"
+                        VerticalOptions="End" 
+                        Padding="20"
+                        Spacing="10"
+                        InputTransparent="False">
+                        <Button
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=ToggleFavoriteCommand}"
+                            CommandParameter="{Binding .}"
+                            WidthRequest="60"
+                            HeightRequest="60"
+                            CornerRadius="30"
+                            Padding="12"
                             InputTransparent="False">
+                            <Button.BackgroundColor>
+                                <AppThemeBinding Light="White" Dark="#808080" />
+                            </Button.BackgroundColor>
+                            <Button.ImageSource>
+                                <MultiBinding Converter="{StaticResource CatFavoriteStatusConverter}">
+                                    <Binding Path="." />
+                                    <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" />
+                                    <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" Path="StorageStatusVersion" />
+                                </MultiBinding>
+                            </Button.ImageSource>
+                            <Button.IsEnabled>
+                                <MultiBinding Converter="{StaticResource CatIsStoredConverter}">
+                                    <Binding Path="." />
+                                    <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" />
+                                    <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" Path="StorageStatusVersion" />
+                                </MultiBinding>
+                            </Button.IsEnabled>
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsEnabled, Source={RelativeSource Self}}" Value="False">
+                                    <Setter Property="Opacity" Value="0.3" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
                             <Button
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=DownloadImageCommand}"
                                 CommandParameter="{Binding .}"
@@ -73,46 +119,13 @@
                                 WidthRequest="60"
                                 HeightRequest="60"
                                 CornerRadius="30"
-                                BackgroundColor="#80000000"
                                 Padding="12"
-                                HorizontalOptions="End"
-                                VerticalOptions="Start"
-                                Margin="20"
-                                InputTransparent="False" />
-                            <Button
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=ToggleFavoriteCommand}"
-                                CommandParameter="{Binding .}"
-                                WidthRequest="60"
-                                HeightRequest="60"
-                                CornerRadius="30"
-                                BackgroundColor="#80000000"
-                                Padding="12"
-                                HorizontalOptions="End"
-                                VerticalOptions="Start"
-                                Margin="20"
                                 InputTransparent="False">
-                                <Button.ImageSource>
-                                    <MultiBinding Converter="{StaticResource CatFavoriteStatusConverter}">
-                                        <Binding Path="." />
-                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" />
-                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" Path="StorageStatusVersion" />
-                                    </MultiBinding>
-                                </Button.ImageSource>
-                                <Button.IsEnabled>
-                                    <MultiBinding Converter="{StaticResource CatIsStoredConverter}">
-                                        <Binding Path="." />
-                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" />
-                                        <Binding Source="{RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}" Path="StorageStatusVersion" />
-                                    </MultiBinding>
-                                </Button.IsEnabled>
-                                <Button.Triggers>
-                                    <DataTrigger TargetType="Button" Binding="{Binding IsEnabled, Source={RelativeSource Self}}" Value="False">
-                                        <Setter Property="Opacity" Value="0.3" />
-                                    </DataTrigger>
-                                </Button.Triggers>
+                                <Button.BackgroundColor>
+                                    <AppThemeBinding Light="White" Dark="#808080" />
+                                </Button.BackgroundColor>
                             </Button>
-                        </HorizontalStackLayout>
-                    </VerticalStackLayout>
+                        </VerticalStackLayout>
                 </Grid>
             </DataTemplate>
         </CollectionView.ItemTemplate>

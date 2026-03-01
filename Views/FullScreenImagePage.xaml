@@ -6,7 +6,7 @@
              x:Class="CatDex.Views.FullScreenImagePage"
              x:DataType="viewmodels:FullScreenImageViewModel"
              NavigationPage.HasNavigationBar="False"
-             BackgroundColor="Black">
+             BackgroundColor="White">
 
     <Grid>
         <controls:ZoomableWebDBImage Url="{Binding ImageUrl}" 
@@ -19,11 +19,14 @@
                 WidthRequest="50"
                 HeightRequest="50"
                 CornerRadius="25"
-                BackgroundColor="#80000000"
                 Padding="10"
                 HorizontalOptions="Start"
                 VerticalOptions="Start"
                 Margin="20"
-                InputTransparent="False"/>
+                InputTransparent="False">
+            <Button.BackgroundColor>
+                <AppThemeBinding Light="White" Dark="#808080" />
+            </Button.BackgroundColor>
+        </Button>
     </Grid>
 </ContentPage>
