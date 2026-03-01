@@ -18,8 +18,6 @@ CatDex is a cross-platform mobile app built with .NET MAUI that lets you discove
 |---|---|
 | [.NET MAUI](https://learn.microsoft.com/dotnet/maui/) | Cross-platform UI framework (Android, iOS, macOS, Windows) |
 | C# / XAML | Application language and UI markup |
-| [CommunityToolkit.Maui](https://github.com/CommunityToolkit/Maui) | Additional MAUI controls and helpers |
-| [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) | MVVM helpers (commands, observable properties) |
 | [Entity Framework Core + SQLite](https://learn.microsoft.com/ef/core/) | Local database for storing cats |
 | [The Cat API](https://thecatapi.com) | Remote source for cat images and breed data |
 
