@@ -3,7 +3,7 @@ using CatDex.Models.DTOs;
 
 namespace CatDex.Services.Interfaces {
     public interface IDataService {
-        public Task<Breed> GetBreedAsync(string id);
+        public Task<Breed?> GetBreedAsync(string id);
         public Task<ICollection<Breed>> GetBreedsAsync();
         public Task<Breed> CreateBreedAsync(BreedDTO breed);
         public Task<Breed> UpdateBreedAsync(string id, BreedDTO breed);

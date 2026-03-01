@@ -6,11 +6,13 @@ namespace CatDex.Services {
     public class CatRepositoryService : ICatRepositoryService {
         private readonly IDataService _data;
         private readonly IApiService _api;
+        private readonly IConnectivityService _connectivity;
         private const string StoreImagesKey = "store_images_preference";
 
-        public CatRepositoryService(IDataService data, IApiService api) {
+        public CatRepositoryService(IDataService data, IApiService api, IConnectivityService connectivity) {
             _data = data;
             _api = api;
+            _connectivity = connectivity;
         }
 
         public async Task<Breed> GetBreedAsync(string id) {
@@ -20,12 +22,26 @@ namespace CatDex.Services {
                 return breed;
             }
 
-            var fetchedBreed = await _api.GetBreedAsync(id) ?? throw new Exception($"Breed with id {id} not found in API.");
+            if (!_connectivity.IsConnected) {
+                if (breed != null) {
+                    return breed;
+                }
+                throw new Exception("No internet connection and breed not found in local cache.");
+            }
 
-            if (breed?.InvalidationDate < DateTime.Now) {
-                return await _data.UpdateBreedAsync(id, fetchedBreed);
-            } else {
-                return await _data.CreateBreedAsync(fetchedBreed);
+            try {
+                var fetchedBreed = await _api.GetBreedAsync(id) ?? throw new Exception($"Breed with id {id} not found in API.");
+
+                if (breed?.InvalidationDate < DateTime.Now) {
+                    return await _data.UpdateBreedAsync(id, fetchedBreed);
+                } else {
+                    return await _data.CreateBreedAsync(fetchedBreed);
+                }
+            } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
+                if (breed != null) {
+                    return breed;
+                }
+                throw new Exception("Failed to fetch breed from API and no cached data available.", ex);
             }
         }
 
@@ -33,21 +49,38 @@ namespace CatDex.Services {
             var breeds = await _data.GetBreedsAsync();
 
             if (breeds == null || breeds.Count == 0) {
-                var fetchedBreeds = await _api.GetBreedsAsync();
-
-                var createdBreeds = new List<Breed>();
-                foreach (var breed in fetchedBreeds) {
-                    createdBreeds.Add(await _data.CreateBreedAsync(breed));
+                if (!_connectivity.IsConnected) {
+                    return Array.Empty<Breed>();
                 }
 
-                return createdBreeds;
+                try {
+                    var fetchedBreeds = await _api.GetBreedsAsync();
+
+                    var createdBreeds = new List<Breed>();
+                    foreach (var breed in fetchedBreeds) {
+                        createdBreeds.Add(await _data.CreateBreedAsync(breed));
+                    }
+
+                    return createdBreeds;
+                } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
+                    return Array.Empty<Breed>();
+                }
+            }
+
+            if (!_connectivity.IsConnected) {
+                return breeds;
             }
 
             var updatedBreeds = await Task.WhenAll(breeds.Select(async breed => {
                 if (breed.InvalidationDate < DateTime.Now) {
-                    var fetchedBreed = await _api.GetBreedAsync(breed.Id);
-                    if (fetchedBreed != null) {
-                        return await _data.UpdateBreedAsync(breed.Id, fetchedBreed);
+                    try {
+                        var fetchedBreed = await _api.GetBreedAsync(breed.Id);
+                        if (fetchedBreed != null) {
+                            return await _data.UpdateBreedAsync(breed.Id, fetchedBreed);
+                        }
+                    } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
+                        // Return cached breed if API call fails
+                        return breed;
                     }
                 }
 
@@ -57,8 +90,16 @@ namespace CatDex.Services {
             return updatedBreeds;
         }
 
-        public Task<ICollection<CatDTO>> GetNewCatsAsync(int page = 0, int limit = 10) {
-            return _api.GetCatsAsync(page, limit);
+        public async Task<ICollection<CatDTO>> GetNewCatsAsync(int page = 0, int limit = 10) {
+            if (!_connectivity.IsConnected) {
+                return Array.Empty<CatDTO>();
+            }
+
+            try {
+                return await _api.GetCatsAsync(page, limit);
+            } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
+                return Array.Empty<CatDTO>();
+            }
         }
 
         public async Task<Cat?> GetCatByIdAsync(string id) {
@@ -78,7 +119,16 @@ namespace CatDex.Services {
                 }
             }
 
-            var fetchedCat = await _api.GetCatAsync(id);
+            if (!_connectivity.IsConnected) {
+                return cat;
+            }
+
+            DetailedCatDTO? fetchedCat = null;
+            try {
+                fetchedCat = await _api.GetCatAsync(id);
+            } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
+                return cat;
+            }
 
             if (fetchedCat == null) {
                 return cat;
@@ -105,11 +155,19 @@ namespace CatDex.Services {
 
             var cats = await _data.GetCatsAsync(breedId);
 
+            if (!_connectivity.IsConnected) {
+                return cats;
+            }
+
             var updatedCats = await Task.WhenAll(cats.Select(async cat => {
                 if (cat.InvalidationDate < DateTime.Now) {
-                    var fetchedCat = await _api.GetCatAsync(cat.Id);
-                    if (fetchedCat != null) {
-                        return await _data.UpdateCatAsync(cat.Id, fetchedCat);
+                    try {
+                        var fetchedCat = await _api.GetCatAsync(cat.Id);
+                        if (fetchedCat != null) {
+                            return await _data.UpdateCatAsync(cat.Id, fetchedCat);
+                        }
+                    } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
+                        // Return cached cat if API call fails
                     }
                 }
 
@@ -124,12 +182,20 @@ namespace CatDex.Services {
 
             var cats = await _data.GetFavoriteCatsAsync(breedId);
 
+            if (!_connectivity.IsConnected) {
+                return cats;
+            }
+
             var updatedCats = await Task.WhenAll(cats.Select(async cat => {
                 // Skip update for custom cats (InvalidationDate == null)
                 if (cat.InvalidationDate != null && cat.InvalidationDate < DateTime.Now) {
-                    var fetchedCat = await _api.GetCatAsync(cat.Id);
-                    if (fetchedCat != null) {
-                        return await _data.UpdateCatAsync(cat.Id, fetchedCat);
+                    try {
+                        var fetchedCat = await _api.GetCatAsync(cat.Id);
+                        if (fetchedCat != null) {
+                            return await _data.UpdateCatAsync(cat.Id, fetchedCat);
+                        }
+                    } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
+                        // Return cached cat if API call fails
                     }
                 }
 
@@ -154,7 +220,26 @@ namespace CatDex.Services {
                 }
             }
 
-            var fetchedCat = await _api.GetCatAsync(id) ?? throw new Exception($"Cat with id {id} not found in API.");
+            if (!_connectivity.IsConnected) {
+                if (cat != null) {
+                    return cat;
+                }
+                throw new Exception("No internet connection and cat not found in local cache.");
+            }
+
+            DetailedCatDTO? fetchedCat = null;
+            try {
+                fetchedCat = await _api.GetCatAsync(id);
+            } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
+                if (cat != null) {
+                    return cat;
+                }
+                throw new Exception("Failed to fetch cat from API and no cached data available.", ex);
+            }
+
+            if (fetchedCat == null) {
+                throw new Exception($"Cat with id {id} not found in API.");
+            }
 
             Cat storedCat;
             if (cat?.InvalidationDate < DateTime.Now) {
@@ -202,13 +287,19 @@ namespace CatDex.Services {
             if (string.IsNullOrEmpty(cat.Url))
                 return;
 
+            if (!_connectivity.IsConnected)
+                return;
+
             try {
                 using var httpClient = new HttpClient();
                 var imageBytes = await httpClient.GetByteArrayAsync(cat.Url);
                 await _data.StoreCatImageAsync(cat.Id, imageBytes);
             }
-            catch (Exception ex) {
+            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                 System.Diagnostics.Debug.WriteLine($"Failed to download and store image for cat {cat.Id}: {ex.Message}");
+            }
+            catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine($"Unexpected error downloading image for cat {cat.Id}: {ex.Message}");
             }
         }
 

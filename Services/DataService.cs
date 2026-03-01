@@ -13,7 +13,7 @@ namespace CatDex.Services {
         }
 
         public async Task<Breed> GetBreedAsync(string id) {
-            var breed = await _db.Breeds.AsNoTracking().Where(breed => breed.Id == id).FirstAsync();
+            var breed = await _db.Breeds.AsNoTracking().Where(breed => breed.Id == id).FirstOrDefaultAsync();
             return breed;
         }
 
@@ -288,7 +288,7 @@ namespace CatDex.Services {
         public async Task<int> DeleteNonCreatedNonFavoriteCatsAsync() {
             var catsToDelete = await _db.Cats
                 .Include(cat => cat.StoredImage)
-                .Where(cat => !cat.IsFavorite && cat.StoredImage == null)
+                .Where(cat => !cat.IsFavorite && !cat.IsUserCreated)
                 .ToListAsync();
 
             var count = catsToDelete.Count;

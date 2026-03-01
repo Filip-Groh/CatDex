@@ -9,6 +9,7 @@ namespace CatDex.ViewModels {
     public partial class DiscoveryViewModel : ObservableObject {
         private readonly ICatRepositoryService _repository;
         private readonly IFileSaverService _fileSaverService;
+        private readonly IConnectivityService _connectivity;
         private int _currentPage = 0;
 
         public ObservableCollection<CatDTO> Cats { get; } = new();
@@ -21,16 +22,32 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial CatDTO? SelectedCat { get; set; }
 
-        public DiscoveryViewModel(ICatRepositoryService repository, IFileSaverService fileSaverService) {
+        [ObservableProperty]
+        public partial bool IsOffline { get; set; }
+
+        public DiscoveryViewModel(ICatRepositoryService repository, IFileSaverService fileSaverService, IConnectivityService connectivity) {
             _repository = repository;
             _fileSaverService = fileSaverService;
+            _connectivity = connectivity;
+
+            IsOffline = !_connectivity.IsConnected;
+            _connectivity.ConnectivityChanged += OnConnectivityChanged;
 
             Task.Run(async () => await OnThresholdReached());
         }
 
+        private void OnConnectivityChanged(object? sender, bool isConnected) {
+            IsOffline = !isConnected;
+
+            // When coming back online, load cats if the collection is empty
+            if (isConnected && Cats.Count == 0) {
+                Task.Run(async () => await OnThresholdReached());
+            }
+        }
+
         [RelayCommand]
         async Task OnThresholdReached() {
-            if (IsBusy)
+            if (IsBusy || IsOffline)
                 return;
 
             try {
@@ -59,29 +76,17 @@ namespace CatDex.ViewModels {
 
         public async Task OnCatSelected() {
             Debug.WriteLine(SelectedCat?.Url);
-            if (SelectedCat != null) {
-                bool wasAlreadyStored = IsCatStored(SelectedCat.Id);
-                var storedCat = await _repository.StoreCatAsync(SelectedCat.Id);
+            if (SelectedCat != null && !IsOffline) {
+                try {
+                    bool wasAlreadyStored = IsCatStored(SelectedCat.Id);
+                    var storedCat = await _repository.StoreCatAsync(SelectedCat.Id);
 
-                if (!wasAlreadyStored) {
-                    StoredCatsFavoriteStatus[storedCat.Id] = storedCat.IsFavorite;
-                    OnPropertyChanged(nameof(StoredCatsFavoriteStatus));
-
-                    // Cache image if "cache all" is enabled
-                    var preference = Preferences.Get("store_images_preference", "favorites");
-                    if (preference == "all" && storedCat.StoredImage == null && !storedCat.IsUserCreated) {
-                        _ = Task.Run(async () => {
-                            try {
-                                if (!string.IsNullOrEmpty(storedCat.Url)) {
-                                    using var httpClient = new HttpClient();
-                                    var imageBytes = await httpClient.GetByteArrayAsync(storedCat.Url);
-                                    await _repository.StoreCatImageAsync(storedCat.Id, imageBytes);
-                                }
-                            } catch (Exception ex) {
-                                Debug.WriteLine($"Failed to cache image for cat {storedCat.Id}: {ex.Message}");
-                            }
-                        });
+                    if (!wasAlreadyStored) {
+                        StoredCatsFavoriteStatus[storedCat.Id] = storedCat.IsFavorite;
+                        OnPropertyChanged(nameof(StoredCatsFavoriteStatus));
                     }
+                } catch (Exception ex) {
+                    Debug.WriteLine($"Failed to store cat: {ex.Message}");
                 }
             }
         }

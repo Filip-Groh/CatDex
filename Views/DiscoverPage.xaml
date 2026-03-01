@@ -8,13 +8,14 @@
              x:DataType="viewmodels:DiscoveryViewModel"
              Title="DiscoverPage">
 
-    <CollectionView 
-        x:Name="CatsCollectionView"
-        ItemsSource="{Binding Cats}"
-        Scrolled="OnCollectionViewScrolled"
-        RemainingItemsThreshold="10"
-        RemainingItemsThresholdReachedCommand="{Binding ThresholdReachedCommand}"
-        VerticalScrollBarVisibility="Never">
+    <Grid>
+        <CollectionView 
+            x:Name="CatsCollectionView"
+            ItemsSource="{Binding Cats}"
+            Scrolled="OnCollectionViewScrolled"
+            RemainingItemsThreshold="10"
+            RemainingItemsThresholdReachedCommand="{Binding ThresholdReachedCommand}"
+            VerticalScrollBarVisibility="Never">
 
         <CollectionView.ItemsLayout>
             <LinearItemsLayout 
@@ -100,5 +101,28 @@
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>
+
+        <!-- Offline Indicator -->
+        <Frame 
+            IsVisible="{Binding IsOffline}"
+            BackgroundColor="#E0000000"
+            CornerRadius="10"
+            Padding="20,10"
+            HorizontalOptions="Center"
+            VerticalOptions="End"
+            Margin="20">
+            <HorizontalStackLayout Spacing="10">
+                <Label 
+                    Text="📵"
+                    FontSize="20"
+                    VerticalOptions="Center" />
+                <Label 
+                    Text="Offline - No new cats available"
+                    TextColor="White"
+                    FontSize="16"
+                    VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </Frame>
+    </Grid>
 
 </ContentPage>
