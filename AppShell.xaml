@@ -7,23 +7,23 @@
     Title="CatDex">
 
     <TabBar>
-        <Tab Title="Discover" Icon="home.png">
+        <Tab Title="Discover" Icon="compass.svg">
             <ShellContent ContentTemplate="{DataTemplate local:DiscoverPage}" />
         </Tab>
 
-        <Tab Title="Seen" Icon="settings.png">
+        <Tab Title="Seen" Icon="eye.svg">
             <ShellContent ContentTemplate="{DataTemplate local:SeenPage}" />
         </Tab>
 
-        <Tab Title="Create" Icon="settings.png">
+        <Tab Title="Create" Icon="add.svg">
             <ShellContent ContentTemplate="{DataTemplate local:CreatePage}" />
         </Tab>
 
-        <Tab Title="Favorites" Icon="settings.png">
+        <Tab Title="Favorites" Icon="favorite_full.svg">
             <ShellContent ContentTemplate="{DataTemplate local:FavoritePage}" />
         </Tab>
 
-        <Tab Title="Settings" Icon="settings.png">
+        <Tab Title="Settings" Icon="settings.svg">
             <ShellContent ContentTemplate="{DataTemplate local:SettingsPage}" />
         </Tab>
     </TabBar>

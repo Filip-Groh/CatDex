@@ -21,21 +21,24 @@
                 Grid.Row="1"
                 Margin="8,0,8,8"/>
 
-        <Button Text="{Binding IsListMode, Converter={StaticResource InvertedBoolConverter}, ConverterParameter='Gallery|List'}"
-                Command="{Binding ToggleDisplayModeCommand}"
+        <Button Command="{Binding ToggleDisplayModeCommand}"
                 HorizontalOptions="End"
                 Margin="8,0"
-                Grid.Row="2">
+                Grid.Row="2"
+                WidthRequest="44"
+                HeightRequest="44"
+                CornerRadius="22"
+                Padding="8">
             <Button.Triggers>
                 <DataTrigger TargetType="Button"
                              Binding="{Binding IsListMode}"
                              Value="True">
-                    <Setter Property="Text" Value="Gallery"/>
+                    <Setter Property="ImageSource" Value="grid.svg"/>
                 </DataTrigger>
                 <DataTrigger TargetType="Button"
                              Binding="{Binding IsListMode}"
                              Value="False">
-                    <Setter Property="Text" Value="List"/>
+                    <Setter Property="ImageSource" Value="list.svg"/>
                 </DataTrigger>
             </Button.Triggers>
         </Button>

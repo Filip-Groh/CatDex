@@ -78,14 +78,12 @@
                                         <Button
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CreateViewModel}}, Path=ToggleBreedCommand}"
                                             CommandParameter="{Binding .}"
-                                            Text="✓"
+                                            ImageSource="add.svg"
                                             WidthRequest="30"
                                             HeightRequest="30"
                                             CornerRadius="15"
-                                            Padding="0"
-                                            FontSize="12"
-                                            BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}"
-                                            TextColor="White" />
+                                            Padding="5"
+                                            BackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Primary}}" />
                                         <Label 
                                             Text="{Binding Name}"
                                             VerticalOptions="Center"

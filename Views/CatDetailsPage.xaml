@@ -34,9 +34,8 @@
                                 HeightRequest="50"
                                 CornerRadius="25"
                                 BackgroundColor="#80000000"
-                                Text="{Binding Cat.IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"
-                                TextColor="White"
-                                FontSize="24"/>
+                                Padding="10"
+                                ImageSource="{Binding Cat.IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"/>
 
                             <Button
                                 Command="{Binding DeleteCommand}"
@@ -44,9 +43,8 @@
                                 HeightRequest="50"
                                 CornerRadius="25"
                                 BackgroundColor="#80000000"
-                                Text="🗑️"
-                                TextColor="White"
-                                FontSize="24"/>
+                                Padding="10"
+                                ImageSource="delete.svg"/>
                         </HorizontalStackLayout>
                     </Grid>
                 </Frame>

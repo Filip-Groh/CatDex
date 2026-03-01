@@ -67,9 +67,8 @@
                             HeightRequest="40"
                             CornerRadius="20"
                             BackgroundColor="#80000000"
-                            Text="{Binding IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"
-                            TextColor="White"
-                            FontSize="20"/>
+                            Padding="8"
+                            ImageSource="{Binding IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"/>
 
                         <Button
                             Command="{Binding Source={x:Reference this}, Path=DeleteCommand}"
@@ -78,9 +77,8 @@
                             HeightRequest="40"
                             CornerRadius="20"
                             BackgroundColor="#80000000"
-                            Text="🗑️"
-                            TextColor="White"
-                            FontSize="20"/>
+                            Padding="8"
+                            ImageSource="delete.svg"/>
                     </HorizontalStackLayout>
                 </Grid>
             </Grid>
