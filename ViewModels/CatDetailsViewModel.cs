@@ -1,10 +1,11 @@
+using CatDex.Constants;
 using CatDex.Models;
 using CatDex.Services.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace CatDex.ViewModels {
-    [QueryProperty(nameof(CatId), nameof(CatId))]
+    [QueryProperty(nameof(CatId), AppConstants.QueryParameters.CatId)]
     public partial class CatDetailsViewModel : ObservableObject {
         private readonly ICatRepositoryService _repository;
 

@@ -1,3 +1,4 @@
+using CatDex.Constants;
 using CatDex.Models;
 using CatDex.Services.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -5,8 +6,8 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace CatDex.ViewModels;
 
-[QueryProperty(nameof(ImageUrl), nameof(ImageUrl))]
-[QueryProperty(nameof(ImageData), nameof(ImageData))]
+[QueryProperty(nameof(ImageUrl), AppConstants.QueryParameters.ImageUrl)]
+[QueryProperty(nameof(ImageData), AppConstants.QueryParameters.ImageData)]
 public partial class FullScreenImageViewModel : ObservableObject
 {
 	private readonly IFileSaverService _fileSaverService;
@@ -31,7 +32,7 @@ public partial class FullScreenImageViewModel : ObservableObject
 	[RelayCommand]
 	private async Task Download()
 	{
-		var fileName = $"cat_{DateTime.Now:yyyyMMddHHmmss}.jpg";
+		var fileName = string.Format(AppConstants.Files.ImageFileNameFormat, DateTime.Now);
 		var success = await _fileSaverService.SaveImageAsync(ImageUrl, ImageData?.Bytes, fileName);
 
 		if (success)

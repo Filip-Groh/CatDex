@@ -1,3 +1,4 @@
+using CatDex.Constants;
 using CatDex.Models;
 using CatDex.Services.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -127,7 +128,7 @@ namespace CatDex.ViewModels {
             if (cat == null)
                 return;
 
-            await Shell.Current.GoToAsync($"{nameof(Views.CatDetailsPage)}?CatId={cat.Id}");
+            await Shell.Current.GoToAsync($"{AppConstants.Routes.CatDetailsPage}?{AppConstants.QueryParameters.CatId}={cat.Id}");
         }
 
         [RelayCommand]

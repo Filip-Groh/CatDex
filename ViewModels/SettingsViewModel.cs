@@ -1,3 +1,4 @@
+using CatDex.Constants;
 using CatDex.Services.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,7 +9,6 @@ namespace CatDex.ViewModels {
         private readonly ICatRepositoryService _catRepositoryService;
         private readonly IThemeService _themeService;
 
-        private const string StoreImagesKey = "store_images_preference";
         private CancellationTokenSource? _cachingCancellationTokenSource;
 
         [ObservableProperty]
@@ -70,12 +70,12 @@ namespace CatDex.ViewModels {
         }
 
         void LoadImageStoragePreference() {
-            var preference = Preferences.Get(StoreImagesKey, "favorites");
+            var preference = Preferences.Get(AppConstants.Preferences.StoreImagesKey, "favorites");
             CacheAllImages = preference == "all";
         }
 
         async partial void OnCacheAllImagesChanged(bool value) {
-            Preferences.Set(StoreImagesKey, value ? "all" : "favorites");
+            Preferences.Set(AppConstants.Preferences.StoreImagesKey, value ? "all" : "favorites");
 
             if (value) {
                 // Switching to "cache all" - start caching all images

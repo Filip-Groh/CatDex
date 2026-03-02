@@ -1,4 +1,5 @@
-﻿using CatDex.Data;
+﻿using CatDex.Constants;
+using CatDex.Data;
 using CatDex.Services;
 using CatDex.Services.Interfaces;
 using CatDex.ViewModels;
@@ -15,7 +16,7 @@ namespace CatDex {
             builder.UseMauiApp<App>();
             builder.UseMauiCommunityToolkit();
 
-            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "catDb.db3");
+            string dbPath = Path.Combine(FileSystem.AppDataDirectory, AppConstants.Database.FileName);
 
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlite($"Filename={dbPath}"));
@@ -23,9 +24,9 @@ namespace CatDex {
             builder.Services.AddSingleton<IDataService, DataService>();
             builder.Services.AddHttpClient<IApiService, ApiService>(client =>
             {
-                client.BaseAddress = new Uri("https://api.thecatapi.com/v1/");
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
-                client.DefaultRequestHeaders.Add("x-api-key", "live_GFAzFIw9j9DjPMJV4cYjqkbxdcDtn5CBrlNL7H7CPwKpj3LcGPfTI7PBhGCKuEtD");
+                client.BaseAddress = new Uri(AppConstants.Api.BaseUrl);
+                client.DefaultRequestHeaders.Add("Accept", AppConstants.Http.AcceptHeader);
+                client.DefaultRequestHeaders.Add(AppConstants.Http.ApiKeyHeader, AppConstants.Api.ApiKey);
             });
 
             builder.Services.AddSingleton<ICatRepositoryService, CatRepositoryService>();

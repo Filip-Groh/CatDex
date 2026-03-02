@@ -1,3 +1,4 @@
+using CatDex.Constants;
 using CatDex.Models;
 
 namespace CatDex.Controls;
@@ -18,9 +19,7 @@ public partial class ZoomableWebDBImage : ContentView
         default(ImageData),
         propertyChanged: OnImageSourceChanged);
 
-    private double _currentScale = 1;
-    private const double MaxScale = 4;
-    private const double MinScale = 1;
+    private double _currentScale = AppConstants.Zoom.InitialScale;
 
     public event EventHandler<bool>? ZoomStateChanged;
 
@@ -36,7 +35,7 @@ public partial class ZoomableWebDBImage : ContentView
         set => SetValue(ImageDataProperty, value);
     }
 
-    public bool IsZoomed => _currentScale > MinScale;
+    public bool IsZoomed => _currentScale > AppConstants.Zoom.MinScale;
 
     public ZoomableWebDBImage()
     {

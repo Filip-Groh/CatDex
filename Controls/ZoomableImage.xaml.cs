@@ -1,3 +1,5 @@
+using CatDex.Constants;
+
 namespace CatDex.Controls;
 
 public partial class ZoomableImage : ContentView
@@ -9,9 +11,7 @@ public partial class ZoomableImage : ContentView
         default(ImageSource),
         propertyChanged: OnSourceChanged);
 
-    private double _currentScale = 1;
-    private const double MaxScale = 4;
-    private const double MinScale = 1;
+    private double _currentScale = AppConstants.Zoom.InitialScale;
 
     public event EventHandler<bool>? ZoomStateChanged;
 
@@ -21,7 +21,7 @@ public partial class ZoomableImage : ContentView
         set => SetValue(SourceProperty, value);
     }
 
-    public bool IsZoomed => _currentScale > MinScale;
+    public bool IsZoomed => _currentScale > AppConstants.Zoom.MinScale;
 
     public ZoomableImage()
     {
@@ -58,7 +58,7 @@ public partial class ZoomableImage : ContentView
 
     private void OnZoomIn(object? sender, EventArgs e)
     {
-        _currentScale = Math.Min(_currentScale + 0.5, MaxScale);
+        _currentScale = Math.Min(_currentScale + 0.5, AppConstants.Zoom.MaxScale);
         ApplyScale();
         ZoomStateChanged?.Invoke(this, IsZoomed);
     }
@@ -66,7 +66,7 @@ public partial class ZoomableImage : ContentView
     private void OnZoomOut(object? sender, EventArgs e)
     {
         var wasZoomed = IsZoomed;
-        _currentScale = Math.Max(_currentScale - 0.5, MinScale);
+        _currentScale = Math.Max(_currentScale - 0.5, AppConstants.Zoom.MinScale);
         ApplyScale();
 
         if (wasZoomed != IsZoomed)

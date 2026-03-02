@@ -1,3 +1,4 @@
+using CatDex.Constants;
 using CatDex.Services.Interfaces;
 using CatDex.Models.DTOs;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -15,10 +16,10 @@ namespace CatDex.ViewModels
         public partial string CatId { get; set; } = string.Empty;
 
         [ObservableProperty]
-        public partial int Width { get; set; } = 500;
+        public partial int Width { get; set; } = AppConstants.DefaultValues.DefaultImageWidth;
 
         [ObservableProperty]
-        public partial int Height { get; set; } = 500;
+        public partial int Height { get; set; } = AppConstants.DefaultValues.DefaultImageHeight;
 
         [ObservableProperty]
         public partial byte[]? ImageBytes { get; set; }
@@ -102,8 +103,8 @@ namespace CatDex.ViewModels
                 }
                 catch
                 {
-                    Width = 500;
-                    Height = 500;
+                    Width = AppConstants.DefaultValues.DefaultImageWidth;
+                    Height = AppConstants.DefaultValues.DefaultImageHeight;
                 }
             });
         }
@@ -123,7 +124,7 @@ namespace CatDex.ViewModels
 
                 IsBusy = true;
 
-                var generatedId = $"custom_{Guid.NewGuid():N}";
+                var generatedId = $"{AppConstants.Files.CustomCatIdPrefix}{Guid.NewGuid():N}";
 
                 var customCat = new CustomCatDTO
                 {
@@ -138,14 +139,14 @@ namespace CatDex.ViewModels
 
                 // Clear form
                 CatId = string.Empty;
-                Width = 500;
-                Height = 500;
+                Width = AppConstants.DefaultValues.DefaultImageWidth;
+                Height = AppConstants.DefaultValues.DefaultImageHeight;
                 ImageBytes = null;
                 ImageSource = null;
                 SelectedBreeds.Clear();
 
                 // Navigate to details page
-                await Shell.Current.GoToAsync($"{nameof(Views.CatDetailsPage)}?CatId={generatedId}");
+                await Shell.Current.GoToAsync($"{AppConstants.Routes.CatDetailsPage}?{AppConstants.QueryParameters.CatId}={generatedId}");
             }
             catch (Exception ex)
             {
