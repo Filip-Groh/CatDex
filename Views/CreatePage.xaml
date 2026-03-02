@@ -3,43 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:CatDex.ViewModels"
              xmlns:models="clr-namespace:CatDex.Models"
+             xmlns:controls="clr-namespace:CatDex.Controls"
              x:Class="CatDex.Views.CreatePage"
              x:DataType="viewmodels:CreateViewModel">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 
-            <Label 
-                Text="Create a Custom Cat"
-                FontSize="24"
-                FontAttributes="Bold"
-                HorizontalOptions="Center"
-                Margin="0,0,0,10" />
+            <Label Text="Create a Custom Cat" Style="{StaticResource PageTitle}"/>
 
-            <Border 
-                StrokeThickness="1"
-                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
-                StrokeShape="RoundRectangle 10"
-                Padding="15"
-                Margin="0,0,0,10">
+            <controls:SectionBorder>
                 <VerticalStackLayout Spacing="10">
 
                     <Grid>
-                        <Label Text="Select Image" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" HorizontalOptions="Start" />
-                        <Button 
-                            ImageSource="upload.svg"
-                            Command="{Binding PickImageCommand}"
-                            IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
-                            HorizontalOptions="End"
-                            WidthRequest="50"
-                            HeightRequest="50"
-                            CornerRadius="25"
-                            Padding="10"
-                            BackgroundColor="Transparent">
-                            <Button.TextColor>
-                                <AppThemeBinding Light="Black" Dark="White" />
-                            </Button.TextColor>
-                        </Button>
+                        <Label Text="Select Image" Style="{StaticResource SectionHeader}" VerticalOptions="Center" HorizontalOptions="Start"/>
+                        <controls:CircularIconButton IconSource="upload.svg"
+                                                     Command="{Binding PickImageCommand}"
+                                                     IsButtonEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                                                     HorizontalOptions="End"/>
                     </Grid>
 
                     <Image 
@@ -53,24 +34,19 @@
                         Spacing="10"
                         Margin="0,10,0,0"
                         IsVisible="{Binding ImageSource, Converter={StaticResource IsNotNullConverter}}">
-                        <Label Text="Dimensions:" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label Text="Dimensions:" Style="{StaticResource BoldInfoLabel}"/>
                         <Label Text="{Binding Width}" VerticalOptions="Center" />
                         <Label Text="x" VerticalOptions="Center" />
                         <Label Text="{Binding Height}" VerticalOptions="Center" />
                         <Label Text="px" VerticalOptions="Center" />
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
-            </Border>
+            </controls:SectionBorder>
 
-            <Border 
-                StrokeThickness="1"
-                Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
-                StrokeShape="RoundRectangle 10"
-                Padding="15"
-                Margin="0,0,0,10">
+            <controls:SectionBorder>
                 <VerticalStackLayout Spacing="10">
 
-                    <Label Text="Select Breeds (Optional)" FontSize="16" FontAttributes="Bold" />
+                    <Label Text="Select Breeds (Optional)" Style="{StaticResource SectionHeader}"/>
 
                     <!-- Selected Breeds List (Vertical) -->
                     <VerticalStackLayout Spacing="8">
@@ -90,23 +66,10 @@
                                             VerticalOptions="Center"
                                             FontSize="14"
                                             HorizontalOptions="Start"/>
-                                        <Button
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CreateViewModel}}, Path=RemoveBreedCommand}"
-                                            CommandParameter="{Binding .}"
-                                            Text="×"
-                                            FontSize="18"
-                                            FontAttributes="Bold"
-                                            WidthRequest="24"
-                                            HeightRequest="24"
-                                            CornerRadius="12"
-                                            Padding="0"
-                                            BackgroundColor="Transparent"
-                                            VerticalOptions="Center"
-                                            HorizontalOptions="End">
-                                            <Button.TextColor>
-                                                <AppThemeBinding Light="Black" Dark="White" />
-                                            </Button.TextColor>
-                                        </Button>
+                                        <Button Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CreateViewModel}}, Path=RemoveBreedCommand}"
+                                                CommandParameter="{Binding .}"
+                                                Style="{StaticResource SmallCloseButton}"
+                                                HorizontalOptions="End"/>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -120,28 +83,20 @@
                         Title="Select a Breed"
                         SelectedIndexChanged="OnBreedSelected"/>
                 </VerticalStackLayout>
-            </Border>
+            </controls:SectionBorder>
 
-            <Label 
-                Text="{Binding ErrorMessage}"
-                TextColor="Red"
-                IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}"
-                Margin="0,10,0,0" />
+            <Label Text="{Binding ErrorMessage}"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource IsNotNullConverter}}"
+                   Style="{StaticResource ErrorLabel}"/>
 
-            <Button
-                Text="Create Cat"
-                Command="{Binding CreateCatCommand}"
-                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
-                BackgroundColor="{StaticResource Primary}"
-                TextColor="White"
-                FontAttributes="Bold"
-                Margin="0,10,0,20" />
+            <Button Text="Create Cat"
+                    Command="{Binding CreateCatCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}"
+                    Style="{StaticResource PrimaryActionButton}"/>
 
-            <ActivityIndicator 
-                IsRunning="{Binding IsBusy}"
-                IsVisible="{Binding IsBusy}"
-                Color="{StaticResource Primary}"
-                HorizontalOptions="Center" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               Style="{StaticResource CenteredActivityIndicator}"/>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

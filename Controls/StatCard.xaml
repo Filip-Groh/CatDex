@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:CatDex.Controls"
+             x:Class="CatDex.Controls.StatCard"
+             x:Name="this">
+
+    <controls:SectionBorder>
+        <VerticalStackLayout Spacing="5">
+            <Label Text="{Binding Source={x:Reference this}, Path=Title}"
+                   Style="{StaticResource SectionHeader}"/>
+            <Label Text="{Binding Source={x:Reference this}, Path=Value}"
+                   Style="{StaticResource StatValueLabel}"/>
+        </VerticalStackLayout>
+    </controls:SectionBorder>
+</ContentView>

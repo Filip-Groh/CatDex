@@ -28,29 +28,11 @@
                                                VerticalOptions="Start"
                                                Spacing="8"
                                                Margin="12">
-                            <Button
-                                Command="{Binding ToggleFavoriteCommand}"
-                                WidthRequest="50"
-                                HeightRequest="50"
-                                CornerRadius="25"
-                                Padding="10"
-                                ImageSource="{Binding Cat.IsFavorite, Converter={StaticResource FavoriteToIconConverter}}">
-                                <Button.BackgroundColor>
-                                    <AppThemeBinding Light="White" Dark="#808080" />
-                                </Button.BackgroundColor>
-                            </Button>
+                            <controls:CircularIconButton IconSource="{Binding Cat.IsFavorite, Converter={StaticResource FavoriteToIconConverter}}"
+                                                         Command="{Binding ToggleFavoriteCommand}"/>
 
-                            <Button
-                                Command="{Binding DeleteCommand}"
-                                WidthRequest="50"
-                                HeightRequest="50"
-                                CornerRadius="25"
-                                Padding="10"
-                                ImageSource="delete.svg">
-                                <Button.BackgroundColor>
-                                    <AppThemeBinding Light="White" Dark="#808080" />
-                                </Button.BackgroundColor>
-                            </Button>
+                            <controls:CircularIconButton IconSource="delete.svg"
+                                                         Command="{Binding DeleteCommand}"/>
                         </HorizontalStackLayout>
                     </Grid>
                 </Frame>
