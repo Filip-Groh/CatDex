@@ -16,9 +16,10 @@
 
         <ScrollView IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}">
             <VerticalStackLayout Padding="16" Spacing="16">
-                <Frame CornerRadius="8" 
-                       Padding="0"
-                       HasShadow="True">
+                <Border StrokeThickness="0" 
+                        StrokeShape="RoundRectangle 8" 
+                        Padding="0"
+                        Shadow="{Shadow Brush=Black, Opacity=0.3, Offset='0,2', Radius=4}">
                     <Grid>
                         <controls:WebDBImage Url="{Binding Cat.Url}" 
                                              ImageData="{Binding Cat.StoredImage}"
@@ -35,7 +36,7 @@
                                                          Command="{Binding DeleteCommand}"/>
                         </HorizontalStackLayout>
                     </Grid>
-                </Frame>
+                </Border>
 
                 <VerticalStackLayout Spacing="8">
                     <Label Text="Information" 
@@ -87,10 +88,11 @@
                     <CollectionView ItemsSource="{Binding Cat.Breeds}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:Breed">
-                                <Frame Margin="0,4" 
-                                       Padding="12"
-                                       CornerRadius="8"
-                                       BackgroundColor="#F0F0F0">
+                                <Border Margin="0,4" 
+                                        Padding="12"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 8"
+                                        BackgroundColor="#F0F0F0">
                                     <VerticalStackLayout Spacing="8">
                                         <Label Text="{Binding Name}" 
                                                FontSize="18" 
@@ -357,95 +359,105 @@
                                         <FlexLayout Wrap="Wrap" 
                                                     AlignItems="Start"
                                                     JustifyContent="Start">
-                                            <Frame Padding="6,3" 
-                                                   CornerRadius="12" 
-                                                   BackgroundColor="#E3F2FD"
-                                                   Margin="2"
-                                                   IsVisible="{Binding Hypoallergenic}">
+                                            <Border Padding="6,3" 
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    BackgroundColor="#E3F2FD"
+                                                    Margin="2"
+                                                    IsVisible="{Binding Hypoallergenic}">
                                                 <Label Text="Hypoallergenic" 
                                                        FontSize="10"/>
-                                            </Frame>
+                                            </Border>
 
-                                            <Frame Padding="6,3" 
-                                                   CornerRadius="12" 
-                                                   BackgroundColor="#E8F5E9"
-                                                   Margin="2"
-                                                   IsVisible="{Binding Natural}">
+                                            <Border Padding="6,3" 
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    BackgroundColor="#E8F5E9"
+                                                    Margin="2"
+                                                    IsVisible="{Binding Natural}">
                                                 <Label Text="Natural Breed" 
                                                        FontSize="10"/>
-                                            </Frame>
+                                            </Border>
 
-                                            <Frame Padding="6,3" 
-                                                   CornerRadius="12" 
-                                                   BackgroundColor="#FFF3E0"
-                                                   Margin="2"
-                                                   IsVisible="{Binding Rare}">
+                                            <Border Padding="6,3" 
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    BackgroundColor="#FFF3E0"
+                                                    Margin="2"
+                                                    IsVisible="{Binding Rare}">
                                                 <Label Text="Rare" 
                                                        FontSize="10"/>
-                                            </Frame>
+                                            </Border>
 
-                                            <Frame Padding="6,3" 
-                                                   CornerRadius="12" 
-                                                   BackgroundColor="#F3E5F5"
-                                                   Margin="2"
-                                                   IsVisible="{Binding Experimental}">
+                                            <Border Padding="6,3" 
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    BackgroundColor="#F3E5F5"
+                                                    Margin="2"
+                                                    IsVisible="{Binding Experimental}">
                                                 <Label Text="Experimental" 
                                                        FontSize="10"/>
-                                            </Frame>
+                                            </Border>
 
-                                            <Frame Padding="6,3" 
-                                                   CornerRadius="12" 
-                                                   BackgroundColor="#FCE4EC"
-                                                   Margin="2"
-                                                   IsVisible="{Binding Hairless}">
+                                            <Border Padding="6,3" 
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    BackgroundColor="#FCE4EC"
+                                                    Margin="2"
+                                                    IsVisible="{Binding Hairless}">
                                                 <Label Text="Hairless" 
                                                        FontSize="10"/>
-                                            </Frame>
+                                            </Border>
 
-                                            <Frame Padding="6,3" 
-                                                   CornerRadius="12" 
-                                                   BackgroundColor="#E0F2F1"
-                                                   Margin="2"
-                                                   IsVisible="{Binding Rex}">
+                                            <Border Padding="6,3" 
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    BackgroundColor="#E0F2F1"
+                                                    Margin="2"
+                                                    IsVisible="{Binding Rex}">
                                                 <Label Text="Rex Coat" 
                                                        FontSize="10"/>
-                                            </Frame>
+                                            </Border>
 
-                                            <Frame Padding="6,3" 
-                                                   CornerRadius="12" 
-                                                   BackgroundColor="#FFF9C4"
-                                                   Margin="2"
-                                                   IsVisible="{Binding SuppressedTail}">
+                                            <Border Padding="6,3" 
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    BackgroundColor="#FFF9C4"
+                                                    Margin="2"
+                                                    IsVisible="{Binding SuppressedTail}">
                                                 <Label Text="Short/No Tail" 
                                                        FontSize="10"/>
-                                            </Frame>
+                                            </Border>
 
-                                            <Frame Padding="6,3" 
-                                                   CornerRadius="12" 
-                                                   BackgroundColor="#FFEBEE"
-                                                   Margin="2"
-                                                   IsVisible="{Binding ShortLegs}">
+                                            <Border Padding="6,3" 
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    BackgroundColor="#FFEBEE"
+                                                    Margin="2"
+                                                    IsVisible="{Binding ShortLegs}">
                                                 <Label Text="Short Legs" 
                                                        FontSize="10"/>
-                                            </Frame>
+                                            </Border>
 
-                                            <Frame Padding="6,3" 
-                                                   CornerRadius="12" 
-                                                   BackgroundColor="#E1F5FE"
-                                                   Margin="2"
-                                                   IsVisible="{Binding Indoor}">
+                                            <Border Padding="6,3" 
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    BackgroundColor="#E1F5FE"
+                                                    Margin="2"
+                                                    IsVisible="{Binding Indoor}">
                                                 <Label Text="Indoor Cat" 
                                                        FontSize="10"/>
-                                            </Frame>
+                                            </Border>
 
-                                            <Frame Padding="6,3" 
-                                                   CornerRadius="12" 
-                                                   BackgroundColor="#F1F8E9"
-                                                   Margin="2"
-                                                   IsVisible="{Binding Lap, Converter={StaticResource NullableIntToVisibilityConverter}}">
+                                            <Border Padding="6,3" 
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12" 
+                                                    BackgroundColor="#F1F8E9"
+                                                    Margin="2"
+                                                    IsVisible="{Binding Lap, Converter={StaticResource NullableIntToVisibilityConverter}}">
                                                 <Label Text="Lap Cat" 
                                                        FontSize="10"/>
-                                            </Frame>
+                                            </Border>
                                         </FlexLayout>
 
                                         <!-- Links -->
@@ -525,7 +537,7 @@
                                             </Label>
                                         </VerticalStackLayout>
                                     </VerticalStackLayout>
-                                </Frame>
+                                </Border>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>

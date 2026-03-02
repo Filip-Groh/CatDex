@@ -57,7 +57,7 @@ public static class AppConstants
     public static class Files
     {
         public const string ImageFileNameFormat = "cat_{0:yyyyMMddHHmmss}.jpg";
-        public const string CustomCatIdPrefix = "custom_";
+        public const string CustomCatIdPrefix = "_custom_";
     }
 
     public static class Http

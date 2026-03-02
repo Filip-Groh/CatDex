@@ -42,10 +42,8 @@
                         VerticalOptions="Start"
                         Margin="20"
                         IsEnabled="False"
-                        InputTransparent="False">
-                        <Button.BackgroundColor>
-                            <AppThemeBinding Light="White" Dark="#808080" />
-                        </Button.BackgroundColor>
+                        InputTransparent="False"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#808080}">
                         <Button.IsVisible>
                             <MultiBinding Converter="{StaticResource CatPreviouslyStoredConverter}">
                                 <Binding Path="." />
@@ -54,27 +52,22 @@
                             </MultiBinding>
                         </Button.IsVisible>
                     </Button>
-                    <Frame
+                    <Border
                         HorizontalOptions="Start"
                         VerticalOptions="End"
                         Margin="20"
                         Padding="10,5"
-                        CornerRadius="5"
-                        HasShadow="False">
-                        <Frame.BackgroundColor>
-                            <AppThemeBinding Light="White" Dark="#808080" />
-                        </Frame.BackgroundColor>
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 5"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark=#808080}">
                         <Label 
                             FontSize="24"
                             FontAttributes="Bold"
                             HorizontalOptions="Start"
                             VerticalOptions="Center"
-                            Text="{Binding Breeds, Converter={StaticResource FirstBreedNameConverter}}">
-                            <Label.TextColor>
-                                <AppThemeBinding Light="Black" Dark="White" />
-                            </Label.TextColor>
-                        </Label>
-                    </Frame>
+                            TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                            Text="{Binding Breeds, Converter={StaticResource FirstBreedNameConverter}}"/>
+                    </Border>
                     <VerticalStackLayout 
                         HorizontalOptions="End"
                         VerticalOptions="End" 
@@ -88,10 +81,8 @@
                             HeightRequest="60"
                             CornerRadius="30"
                             Padding="12"
-                            InputTransparent="False">
-                            <Button.BackgroundColor>
-                                <AppThemeBinding Light="White" Dark="#808080" />
-                            </Button.BackgroundColor>
+                            InputTransparent="False"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=#808080}">
                             <Button.ImageSource>
                                 <MultiBinding Converter="{StaticResource CatFavoriteStatusConverter}">
                                     <Binding Path="." />
@@ -120,11 +111,8 @@
                                 HeightRequest="60"
                                 CornerRadius="30"
                                 Padding="12"
-                                InputTransparent="False">
-                                <Button.BackgroundColor>
-                                    <AppThemeBinding Light="White" Dark="#808080" />
-                                </Button.BackgroundColor>
-                            </Button>
+                                InputTransparent="False"
+                                BackgroundColor="{AppThemeBinding Light=White, Dark=#808080}"/>
                         </VerticalStackLayout>
                 </Grid>
             </DataTemplate>
@@ -132,10 +120,11 @@
     </CollectionView>
 
         <!-- Offline Indicator -->
-        <Frame 
+        <Border 
             IsVisible="{Binding IsOffline}"
             BackgroundColor="#E0000000"
-            CornerRadius="10"
+            StrokeThickness="0"
+            StrokeShape="RoundRectangle 10"
             Padding="20,10"
             HorizontalOptions="Center"
             VerticalOptions="End"
@@ -152,7 +141,7 @@
                     FontSize="16"
                     VerticalOptions="Center" />
             </HorizontalStackLayout>
-        </Frame>
+        </Border>
     </Grid>
 
 </ContentPage>
