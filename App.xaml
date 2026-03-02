@@ -18,16 +18,16 @@
             <converters:CatIsStoredConverter x:Key="CatIsStoredConverter" />
             <converters:CatPreviouslyStoredConverter x:Key="CatPreviouslyStoredConverter" />
             <converters:BoolToYesNoConverter x:Key="BoolToYesNoConverter" />
-            <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter" />
-            <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
-            <converters:NullableIntToVisibilityConverter x:Key="NullableIntToVisibilityConverter" />
             <converters:AdditionalBreedsConverter x:Key="AdditionalBreedsConverter" />
-            <converters:CompareConverter x:Key="CompareConverter" />
             <converters:FirstBreedNameConverter x:Key="FirstBreedNameConverter" />
 
             <!-- CommunityToolkit.Maui Converters -->
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <toolkit:IsNotNullConverter x:Key="IsNotNullConverter" />
+            <toolkit:IsStringNotNullOrWhiteSpaceConverter x:Key="StringNotEmptyConverter" />
+            <toolkit:CompareConverter x:Key="CompareConverter" ComparisonOperator="GreaterOrEqual" />
+            <toolkit:CompareConverter x:Key="CountToVisibilityConverter" ComparisonOperator="Greater" ComparingValue="0" />
+            <toolkit:CompareConverter x:Key="NullableIntToVisibilityConverter" ComparisonOperator="Greater" ComparingValue="0" />
             <toolkit:CompareConverter x:Key="IsNotZeroConverter" ComparisonOperator="NotEqual" ComparingValue="0" />
         </ResourceDictionary>
     </Application.Resources>
