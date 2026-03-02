@@ -8,6 +8,7 @@ namespace CatDex.ViewModels {
     public partial class SettingsViewModel : ObservableObject {
         private readonly ICatRepositoryService _catRepositoryService;
         private readonly IThemeService _themeService;
+        private readonly IDialogService _dialogService;
 
         private CancellationTokenSource? _cachingCancellationTokenSource;
 
@@ -59,9 +60,10 @@ namespace CatDex.ViewModels {
             "Dark" 
         };
 
-        public SettingsViewModel(ICatRepositoryService catRepositoryService, IThemeService themeService) {
+        public SettingsViewModel(ICatRepositoryService catRepositoryService, IThemeService themeService, IDialogService dialogService) {
             _catRepositoryService = catRepositoryService;
             _themeService = themeService;
+            _dialogService = dialogService;
 
             SelectedTheme = _themeService.GetThemeName();
             LoadImageStoragePreference();
@@ -137,7 +139,7 @@ namespace CatDex.ViewModels {
                 return;
 
             try {
-                bool confirm = await Shell.Current.DisplayAlertAsync(
+                bool confirm = await _dialogService.ShowConfirmationAsync(
                     "Delete Cats",
                     "Are you sure you want to delete all non-created and non-favorite cats?",
                     "Delete",
@@ -150,7 +152,7 @@ namespace CatDex.ViewModels {
 
                 var deletedCount = await _catRepositoryService.DeleteNonCreatedNonFavoriteCatsAsync();
 
-                await Shell.Current.DisplayAlertAsync(
+                await _dialogService.ShowAlertAsync(
                     "Success",
                     $"Deleted {deletedCount} cat(s)",
                     "OK");
@@ -158,7 +160,7 @@ namespace CatDex.ViewModels {
                 await LoadStatisticsAsync();
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine($"Error deleting cats: {ex.Message}");
-                await Shell.Current.DisplayAlertAsync("Error", $"Failed to delete cats: {ex.Message}", "OK");
+                await _dialogService.ShowAlertAsync("Error", $"Failed to delete cats: {ex.Message}", "OK");
             } finally {
                 IsBusy = false;
             }

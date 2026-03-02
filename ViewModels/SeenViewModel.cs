@@ -8,6 +8,8 @@ using System.Collections.ObjectModel;
 namespace CatDex.ViewModels {
     public partial class SeenViewModel : ObservableObject {
         private readonly ICatRepositoryService _catRepositoryService;
+        private readonly INavigationService _navigationService;
+        private readonly IDialogService _dialogService;
 
         public ObservableCollection<Cat> Cats { get; } = new();
 
@@ -25,8 +27,10 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial Breed? SelectedBreed { get; set; }
 
-        public SeenViewModel(ICatRepositoryService catRepositoryService) {
+        public SeenViewModel(ICatRepositoryService catRepositoryService, INavigationService navigationService, IDialogService dialogService) {
             _catRepositoryService = catRepositoryService;
+            _navigationService = navigationService;
+            _dialogService = dialogService;
 
             Task.Run(async () => {
                 await LoadBreedsAsync();
@@ -107,7 +111,7 @@ namespace CatDex.ViewModels {
                 return;
 
             try {
-                bool confirm = await Shell.Current.DisplayAlertAsync(
+                bool confirm = await _dialogService.ShowConfirmationAsync(
                     "Delete Cat",
                     $"Are you sure you want to delete this cat (ID: {cat.Id})?",
                     "Delete",
@@ -119,7 +123,7 @@ namespace CatDex.ViewModels {
                 await _catRepositoryService.DeleteCatAsync(cat.Id);
                 Cats.Remove(cat);
             } catch (Exception ex) {
-                await Shell.Current.DisplayAlertAsync("Error", $"Failed to delete cat: {ex.Message}", "OK");
+                await _dialogService.ShowAlertAsync("Error", $"Failed to delete cat: {ex.Message}", "OK");
             }
         }
 
@@ -128,7 +132,7 @@ namespace CatDex.ViewModels {
             if (cat == null)
                 return;
 
-            await Shell.Current.GoToAsync($"{AppConstants.Routes.CatDetailsPage}?{AppConstants.QueryParameters.CatId}={cat.Id}");
+            await _navigationService.GoToAsync($"{AppConstants.Routes.CatDetailsPage}?{AppConstants.QueryParameters.CatId}={cat.Id}");
         }
 
         [RelayCommand]

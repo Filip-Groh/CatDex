@@ -11,6 +11,8 @@ namespace CatDex.ViewModels;
 public partial class FullScreenImageViewModel : ObservableObject
 {
 	private readonly IFileSaverService _fileSaverService;
+	private readonly INavigationService _navigationService;
+	private readonly IDialogService _dialogService;
 
 	[ObservableProperty]
 	private string? imageUrl;
@@ -18,15 +20,17 @@ public partial class FullScreenImageViewModel : ObservableObject
 	[ObservableProperty]
 	private ImageData? imageData;
 
-	public FullScreenImageViewModel(IFileSaverService fileSaverService)
+	public FullScreenImageViewModel(IFileSaverService fileSaverService, INavigationService navigationService, IDialogService dialogService)
 	{
 		_fileSaverService = fileSaverService;
+		_navigationService = navigationService;
+		_dialogService = dialogService;
 	}
 
 	[RelayCommand]
 	private async Task Close()
 	{
-		await Shell.Current.GoToAsync("..");
+		await _navigationService.GoBackAsync();
 	}
 
 	[RelayCommand]
@@ -37,11 +41,11 @@ public partial class FullScreenImageViewModel : ObservableObject
 
 		if (success)
 		{
-			await Shell.Current.DisplayAlert("Success", "Image saved successfully!", "OK");
+			await _dialogService.ShowAlertAsync("Success", "Image saved successfully!", "OK");
 		}
 		else
 		{
-			await Shell.Current.DisplayAlert("Error", "Failed to save image.", "OK");
+			await _dialogService.ShowAlertAsync("Error", "Failed to save image.", "OK");
 		}
 	}
 }

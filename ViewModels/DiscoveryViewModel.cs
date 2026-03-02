@@ -10,6 +10,8 @@ namespace CatDex.ViewModels {
         private readonly ICatRepositoryService _repository;
         private readonly IFileSaverService _fileSaverService;
         private readonly IConnectivityService _connectivity;
+        private readonly INavigationService _navigationService;
+        private readonly IDialogService _dialogService;
         private int _currentPage = 0;
 
         public ObservableCollection<DetailedCatDTO> Cats { get; } = new();
@@ -28,10 +30,12 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial bool IsOffline { get; set; }
 
-        public DiscoveryViewModel(ICatRepositoryService repository, IFileSaverService fileSaverService, IConnectivityService connectivity) {
+        public DiscoveryViewModel(ICatRepositoryService repository, IFileSaverService fileSaverService, IConnectivityService connectivity, INavigationService navigationService, IDialogService dialogService) {
             _repository = repository;
             _fileSaverService = fileSaverService;
             _connectivity = connectivity;
+            _navigationService = navigationService;
+            _dialogService = dialogService;
 
             IsOffline = !_connectivity.IsConnected;
             _connectivity.ConnectivityChanged += OnConnectivityChanged;
@@ -165,7 +169,7 @@ namespace CatDex.ViewModels {
             if (cat == null)
                 return;
 
-            await Shell.Current.GoToAsync($"{nameof(Views.CatDetailsPage)}?CatId={cat.Id}");
+            await _navigationService.GoToAsync($"{nameof(Views.CatDetailsPage)}?CatId={cat.Id}");
         }
 
         [RelayCommand]
@@ -178,13 +182,13 @@ namespace CatDex.ViewModels {
                 var success = await _fileSaverService.SaveImageAsync(cat.Url, null, fileName);
 
                 if (success) {
-                    await Shell.Current.DisplayAlert("Success", "Image saved successfully!", "OK");
+                    await _dialogService.ShowAlertAsync("Success", "Image saved successfully!", "OK");
                 } else {
-                    await Shell.Current.DisplayAlert("Error", "Failed to save image.", "OK");
+                    await _dialogService.ShowAlertAsync("Error", "Failed to save image.", "OK");
                 }
             } catch (Exception ex) {
                 Debug.WriteLine($"Error downloading image: {ex.Message}");
-                await Shell.Current.DisplayAlert("Error", "Failed to save image.", "OK");
+                await _dialogService.ShowAlertAsync("Error", "Failed to save image.", "OK");
             }
         }
     }

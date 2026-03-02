@@ -11,6 +11,7 @@ namespace CatDex.ViewModels
     public partial class CreateViewModel : ObservableObject
     {
         private readonly ICatRepositoryService _repository;
+        private readonly INavigationService _navigationService;
 
         [ObservableProperty]
         public partial string CatId { get; set; } = string.Empty;
@@ -39,9 +40,10 @@ namespace CatDex.ViewModels
         public ObservableCollection<Breed> AvailableBreeds { get; } = new();
         public ObservableCollection<Breed> SelectedBreeds { get; } = new();
 
-        public CreateViewModel(ICatRepositoryService repository)
+        public CreateViewModel(ICatRepositoryService repository, INavigationService navigationService)
         {
             _repository = repository;
+            _navigationService = navigationService;
             Task.Run(async () => await LoadBreeds());
         }
 
@@ -146,7 +148,7 @@ namespace CatDex.ViewModels
                 SelectedBreeds.Clear();
 
                 // Navigate to details page
-                await Shell.Current.GoToAsync($"{AppConstants.Routes.CatDetailsPage}?{AppConstants.QueryParameters.CatId}={generatedId}");
+                await _navigationService.GoToAsync($"{AppConstants.Routes.CatDetailsPage}?{AppConstants.QueryParameters.CatId}={generatedId}");
             }
             catch (Exception ex)
             {

@@ -8,6 +8,8 @@ namespace CatDex.ViewModels {
     [QueryProperty(nameof(CatId), AppConstants.QueryParameters.CatId)]
     public partial class CatDetailsViewModel : ObservableObject {
         private readonly ICatRepositoryService _repository;
+        private readonly INavigationService _navigationService;
+        private readonly IDialogService _dialogService;
 
         [ObservableProperty]
         public partial string? CatId { get; set; }
@@ -18,8 +20,10 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial bool IsLoading { get; set; }
 
-        public CatDetailsViewModel(ICatRepositoryService repository) {
+        public CatDetailsViewModel(ICatRepositoryService repository, INavigationService navigationService, IDialogService dialogService) {
             _repository = repository;
+            _navigationService = navigationService;
+            _dialogService = dialogService;
         }
 
         partial void OnCatIdChanged(string? value) {
@@ -38,7 +42,7 @@ namespace CatDex.ViewModels {
                 Cat = await _repository.GetCatByIdAsync(CatId);
             } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
                 System.Diagnostics.Debug.WriteLine($"Rate limit hit when loading cat {CatId}.");
-                await Shell.Current.DisplayAlert("Rate Limit", "API rate limit exceeded. Please try again later.", "OK");
+                await _dialogService.ShowAlertAsync("Rate Limit", "API rate limit exceeded. Please try again later.", "OK");
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine($"Error loading cat {CatId}: {ex.Message}");
             } finally {
@@ -67,7 +71,7 @@ namespace CatDex.ViewModels {
                 return;
 
             try {
-                bool confirm = await Shell.Current.DisplayAlertAsync(
+                bool confirm = await _dialogService.ShowConfirmationAsync(
                     "Delete Cat",
                     $"Are you sure you want to delete this cat (ID: {Cat.Id})?",
                     "Delete",
@@ -77,16 +81,16 @@ namespace CatDex.ViewModels {
                     return;
 
                 await _repository.DeleteCatAsync(Cat.Id);
-                await Shell.Current.GoToAsync("..");
+                await _navigationService.GoBackAsync();
             }
             catch (Exception ex) {
-                await Shell.Current.DisplayAlertAsync("Error", $"Failed to delete cat: {ex.Message}", "OK");
+                await _dialogService.ShowAlertAsync("Error", $"Failed to delete cat: {ex.Message}", "OK");
             }
         }
 
         [RelayCommand]
         async Task GoBack() {
-            await Shell.Current.GoToAsync("..");
+            await _navigationService.GoBackAsync();
         }
 
         [RelayCommand]

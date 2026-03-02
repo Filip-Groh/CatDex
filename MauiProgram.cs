@@ -33,6 +33,8 @@ namespace CatDex {
             builder.Services.AddSingleton<IFileSaverService, FileSaverService>();
             builder.Services.AddSingleton<IThemeService, ThemeService>();
             builder.Services.AddSingleton<IConnectivityService, ConnectivityService>();
+            builder.Services.AddSingleton<INavigationService, NavigationService>();
+            builder.Services.AddSingleton<IDialogService, DialogService>();
 
             builder.Services.AddSingleton<DiscoveryViewModel>();
             builder.Services.AddSingleton<DiscoverPage>();
