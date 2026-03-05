@@ -6,23 +6,26 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CatDex.Services {
     public class DataService : IDataService {
-        private readonly AppDbContext _db;
+        private readonly IDbContextFactory<AppDbContext> _contextFactory;
 
-        public DataService(AppDbContext db) {
-            _db = db;
+        public DataService(IDbContextFactory<AppDbContext> contextFactory) {
+            _contextFactory = contextFactory;
         }
 
         public async Task<Breed> GetBreedAsync(string id) {
-            var breed = await _db.Breeds.AsNoTracking().Where(breed => breed.Id == id).FirstOrDefaultAsync();
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var breed = await db.Breeds.AsNoTracking().Where(breed => breed.Id == id).FirstOrDefaultAsync();
             return breed;
         }
 
         public async Task<ICollection<Breed>> GetBreedsAsync() {
-            var breeds = await _db.Breeds.AsNoTracking().ToArrayAsync();
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var breeds = await db.Breeds.AsNoTracking().ToArrayAsync();
             return breeds;
         }
 
         public async Task<Breed> CreateBreedAsync(BreedDTO breed) {
+            await using var db = await _contextFactory.CreateDbContextAsync();
             var createdBreed = new Breed {
                 Id = breed.Id,
                 Name = breed.Name,
@@ -68,17 +71,18 @@ namespace CatDex.Services {
                 InvalidationDate = DateTime.Now.AddDays(1),
             };
 
-            _db.Breeds.Add(createdBreed);
+            db.Breeds.Add(createdBreed);
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
-            _db.Entry(createdBreed).State = EntityState.Detached;
+            db.Entry(createdBreed).State = EntityState.Detached;
 
             return createdBreed;
         }
 
         public async Task<Breed> UpdateBreedAsync(string id, BreedDTO breed) {
-            var existingBreed = await _db.Breeds.FindAsync(id);
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var existingBreed = await db.Breeds.FindAsync(id);
 
             if (existingBreed == null) {
                 throw new InvalidOperationException($"Breed with ID {id} not found.");
@@ -126,16 +130,17 @@ namespace CatDex.Services {
             existingBreed.ReferenceImageId = breed.ReferenceImageId;
             existingBreed.InvalidationDate = DateTime.Now.AddDays(1);
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
-            _db.Entry(existingBreed).State = EntityState.Detached;
+            db.Entry(existingBreed).State = EntityState.Detached;
 
             return existingBreed;
         }
 
         public async Task<Cat?> GetCatAsync(string id) {
             try {
-                var cat = await _db.Cats.AsNoTracking()
+                await using var db = await _contextFactory.CreateDbContextAsync();
+                var cat = await db.Cats.AsNoTracking()
                     .Include(cat => cat.Breeds)
                     .Include(cat => cat.StoredImage)
                     .Where(cat => cat.Id == id)
@@ -147,7 +152,8 @@ namespace CatDex.Services {
         }
 
         public async Task<ICollection<Cat>> GetCatsAsync(string? breedId = null) {
-            var cats = _db.Cats.AsNoTracking()
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var cats = db.Cats.AsNoTracking()
                 .Include(cat => cat.Breeds)
                 .Include(cat => cat.StoredImage)
                 .AsQueryable();
@@ -160,7 +166,8 @@ namespace CatDex.Services {
         }
 
         public async Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId = null) {
-            var cats = _db.Cats.AsNoTracking()
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var cats = db.Cats.AsNoTracking()
                 .Include(cat => cat.Breeds)
                 .Include(cat => cat.StoredImage)
                 .AsQueryable()
@@ -174,6 +181,7 @@ namespace CatDex.Services {
         }
 
         public async Task<Cat> StoreCatAsync(DetailedCatDTO cat) {
+            await using var db = await _contextFactory.CreateDbContextAsync();
             var createdCat = new Cat {
                 Id = cat.Id,
                 Url = cat.Url,
@@ -186,23 +194,24 @@ namespace CatDex.Services {
 
             if (cat.Breeds != null && cat.Breeds.Count > 0) {
                 var breedIds = cat.Breeds.Select(breed => breed.Id);
-                var breeds = await _db.Breeds
+                var breeds = await db.Breeds
                     .Where(b => breedIds.Contains(b.Id))
                     .ToArrayAsync();
 
                 createdCat.Breeds = breeds;
             }
 
-            _db.Add(createdCat);
+            db.Add(createdCat);
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
-            _db.Entry(createdCat).State = EntityState.Detached;
+            db.Entry(createdCat).State = EntityState.Detached;
 
             return createdCat;
         }
 
         public async Task<Cat> CreateCatAsync(CustomCatDTO cat) {
+            await using var db = await _contextFactory.CreateDbContextAsync();
             var catObject = new Cat {
                 Id = cat.Id,
                 Url = null,
@@ -221,21 +230,22 @@ namespace CatDex.Services {
 
             catObject.StoredImage = image;
 
-            _db.Images.Add(image);
+            db.Images.Add(image);
 
-            var breeds = await _db.Breeds.Where(breed => cat.BreedIds != null && cat.BreedIds.Contains(breed.Id)).ToArrayAsync();
+            var breeds = await db.Breeds.Where(breed => cat.BreedIds != null && cat.BreedIds.Contains(breed.Id)).ToArrayAsync();
 
             catObject.Breeds = breeds;
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
-            _db.Entry(catObject).State = EntityState.Detached;
+            db.Entry(catObject).State = EntityState.Detached;
 
             return catObject;
         }
 
         public async Task<Cat> UpdateCatAsync(string id, DetailedCatDTO cat) {
-            var existingCat = await _db.Cats.FindAsync(id);
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var existingCat = await db.Cats.FindAsync(id);
 
             if (existingCat == null) {
                 throw new InvalidOperationException($"Breed with ID {id} not found.");
@@ -246,31 +256,33 @@ namespace CatDex.Services {
             existingCat.Height = cat.Height;
             existingCat.InvalidationDate = DateTime.Now.AddDays(1);
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
-            _db.Entry(existingCat).State = EntityState.Detached;
+            db.Entry(existingCat).State = EntityState.Detached;
 
             return existingCat;
         }
 
         public async Task<Cat> DeleteCatAsync(string id) {
-            var existingCat = await _db.Cats.Include(cat => cat.Breeds).FirstAsync(cat => cat.Id == id);
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var existingCat = await db.Cats.Include(cat => cat.Breeds).FirstAsync(cat => cat.Id == id);
             
             if (existingCat == null) {
                 throw new InvalidOperationException($"Cat with ID {id} not found.");
             }
-            
-            _db.Cats.Remove(existingCat);
-            
-            await _db.SaveChangesAsync();
-            
-            _db.Entry(existingCat).State = EntityState.Detached;
-            
+
+            db.Cats.Remove(existingCat);
+
+            await db.SaveChangesAsync();
+
+            db.Entry(existingCat).State = EntityState.Detached;
+
             return existingCat;
         }
 
         public async Task<Cat> SetCatIsFavorite(string id, bool isFavorite) {
-            var existingCat = await _db.Cats.FindAsync(id);
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var existingCat = await db.Cats.FindAsync(id);
 
             if (existingCat == null) {
                 throw new InvalidOperationException($"Breed with ID {id} not found.");
@@ -278,30 +290,32 @@ namespace CatDex.Services {
 
             existingCat.IsFavorite = isFavorite;
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
-            _db.Entry(existingCat).State = EntityState.Detached;
+            db.Entry(existingCat).State = EntityState.Detached;
 
             return existingCat;
         }
 
         public async Task<int> DeleteNonCreatedNonFavoriteCatsAsync() {
-            var catsToDelete = await _db.Cats
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var catsToDelete = await db.Cats
                 .Include(cat => cat.StoredImage)
                 .Where(cat => !cat.IsFavorite && !cat.IsUserCreated)
                 .ToListAsync();
 
             var count = catsToDelete.Count;
 
-            _db.Cats.RemoveRange(catsToDelete);
+            db.Cats.RemoveRange(catsToDelete);
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
             return count;
         }
 
         public async Task<Cat> StoreCatImageAsync(string catId, byte[] imageBytes) {
-            var existingCat = await _db.Cats
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var existingCat = await db.Cats
                 .Include(cat => cat.StoredImage)
                 .FirstOrDefaultAsync(cat => cat.Id == catId);
 
@@ -319,27 +333,29 @@ namespace CatDex.Services {
                 };
 
                 existingCat.StoredImage = image;
-                _db.Images.Add(image);
+                db.Images.Add(image);
             }
 
-            await _db.SaveChangesAsync();
+            await db.SaveChangesAsync();
 
-            _db.Entry(existingCat).State = EntityState.Detached;
+            db.Entry(existingCat).State = EntityState.Detached;
 
             return existingCat;
         }
 
         public async Task DeleteCatImageAsync(string catId) {
-            var image = await _db.Images.FindAsync(catId);
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var image = await db.Images.FindAsync(catId);
 
             if (image != null) {
-                _db.Images.Remove(image);
-                await _db.SaveChangesAsync();
+                db.Images.Remove(image);
+                await db.SaveChangesAsync();
             }
         }
 
         public async Task<ICollection<Cat>> GetCatsWithoutImagesAsync() {
-            var cats = await _db.Cats
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var cats = await db.Cats
                 .AsNoTracking()
                 .Include(cat => cat.Breeds)
                 .Include(cat => cat.StoredImage)

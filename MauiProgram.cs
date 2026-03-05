@@ -18,10 +18,10 @@ namespace CatDex {
 
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, AppConstants.Database.FileName);
 
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlite($"Filename={dbPath}"));
+            builder.Services.AddDbContextFactory<AppDbContext>(options =>
+                options.UseSqlite($"Data Source={dbPath};Mode=ReadWriteCreate;Cache=Shared;Pooling=True"));
 
-            builder.Services.AddSingleton<IDataService, DataService>();
+            builder.Services.AddScoped<IDataService, DataService>();
             builder.Services.AddHttpClient<IApiService, ApiService>(client =>
             {
                 client.BaseAddress = new Uri(AppConstants.Api.BaseUrl);
@@ -29,7 +29,7 @@ namespace CatDex {
                 client.DefaultRequestHeaders.Add(AppConstants.Http.ApiKeyHeader, AppConstants.Api.ApiKey);
             });
 
-            builder.Services.AddSingleton<ICatRepositoryService, CatRepositoryService>();
+            builder.Services.AddScoped<ICatRepositoryService, CatRepositoryService>();
             builder.Services.AddSingleton<IFileSaverService, FileSaverService>();
             builder.Services.AddSingleton<IThemeService, ThemeService>();
             builder.Services.AddSingleton<IConnectivityService, ConnectivityService>();
