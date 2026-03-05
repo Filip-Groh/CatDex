@@ -165,6 +165,20 @@ namespace CatDex.Services {
             return await cats.ToArrayAsync();
         }
 
+        public async Task<ICollection<Cat>> GetCatsAsync(string? breedId, int skip, int take) {
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var cats = db.Cats.AsNoTracking()
+                .Include(cat => cat.Breeds)
+                .Include(cat => cat.StoredImage)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(breedId)) {
+                cats = cats.Where(cat => cat.Breeds.Any(breed => breed.Id == breedId));
+            }
+
+            return await cats.Skip(skip).Take(take).ToArrayAsync();
+        }
+
         public async Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId = null) {
             await using var db = await _contextFactory.CreateDbContextAsync();
             var cats = db.Cats.AsNoTracking()
@@ -178,6 +192,21 @@ namespace CatDex.Services {
             }
 
             return await cats.ToArrayAsync();
+        }
+
+        public async Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId, int skip, int take) {
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var cats = db.Cats.AsNoTracking()
+                .Include(cat => cat.Breeds)
+                .Include(cat => cat.StoredImage)
+                .AsQueryable()
+                .Where(cat => cat.IsFavorite);
+
+            if (!string.IsNullOrEmpty(breedId)) {
+                cats = cats.Where(cat => cat.Breeds.Any(breed => breed.Id == breedId));
+            }
+
+            return await cats.Skip(skip).Take(take).ToArrayAsync();
         }
 
         public async Task<Cat> StoreCatAsync(DetailedCatDTO cat) {

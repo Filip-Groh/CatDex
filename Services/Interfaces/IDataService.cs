@@ -10,7 +10,9 @@ namespace CatDex.Services.Interfaces {
 
         public Task<Cat?> GetCatAsync(string id);
         public Task<ICollection<Cat>> GetCatsAsync(string? breedId = null);
+        public Task<ICollection<Cat>> GetCatsAsync(string? breedId, int skip, int take);
         public Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId = null);
+        public Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId, int skip, int take);
         public Task<Cat> StoreCatAsync(DetailedCatDTO cat);
         public Task<Cat> CreateCatAsync(CustomCatDTO cat);
         public Task<Cat> UpdateCatAsync(string id, DetailedCatDTO cat);

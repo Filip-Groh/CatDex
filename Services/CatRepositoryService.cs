@@ -214,6 +214,35 @@ namespace CatDex.Services {
             return updatedCats;
         }
 
+        public async Task<ICollection<Cat>> GetStoredCatsAsync(string? breedId, int skip, int take) {
+            await GetBreedsAsync();
+
+            var cats = await _data.GetCatsAsync(breedId, skip, take);
+
+            if (!_connectivity.IsConnected) {
+                return cats;
+            }
+
+            var updatedCats = await Task.WhenAll(cats.Select(async cat => {
+                if (cat.InvalidationDate < DateTime.Now) {
+                    try {
+                        var fetchedCat = await _api.GetCatAsync(cat.Id);
+                        if (fetchedCat != null) {
+                            return await _data.UpdateCatAsync(cat.Id, fetchedCat);
+                        }
+                    } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                        Debug.WriteLine($"Rate limit hit when updating cat {cat.Id}, using cached data.");
+                        return cat;
+                    } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
+                    }
+                }
+
+                return cat;
+            }));
+
+            return updatedCats;
+        }
+
         public async Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId = null) {
             await GetBreedsAsync(); // Ensure breeds are up to date before fetching cats
 
@@ -236,6 +265,35 @@ namespace CatDex.Services {
                         return cat;
                     } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                         // Return cached cat if API call fails
+                    }
+                }
+
+                return cat;
+            }));
+
+            return updatedCats;
+        }
+
+        public async Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId, int skip, int take) {
+            await GetBreedsAsync();
+
+            var cats = await _data.GetFavoriteCatsAsync(breedId, skip, take);
+
+            if (!_connectivity.IsConnected) {
+                return cats;
+            }
+
+            var updatedCats = await Task.WhenAll(cats.Select(async cat => {
+                if (cat.InvalidationDate != null && cat.InvalidationDate < DateTime.Now) {
+                    try {
+                        var fetchedCat = await _api.GetCatAsync(cat.Id);
+                        if (fetchedCat != null) {
+                            return await _data.UpdateCatAsync(cat.Id, fetchedCat);
+                        }
+                    } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
+                        Debug.WriteLine($"Rate limit hit when updating favorite cat {cat.Id}, using cached data.");
+                        return cat;
+                    } catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException) {
                     }
                 }
 

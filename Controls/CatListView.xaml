@@ -69,7 +69,9 @@
                      Grid.Row="2"
                      Margin="8,0">
             <CollectionView ItemsSource="{Binding Cats}"
-                            SelectionMode="None">
+                            SelectionMode="None"
+                            RemainingItemsThreshold="5"
+                            RemainingItemsThresholdReachedCommand="{Binding LoadMoreCatsCommand}">
 
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Vertical" 
@@ -112,6 +114,14 @@
                         </VerticalStackLayout>
                     </ContentView>
                 </CollectionView.EmptyView>
+
+                <CollectionView.Footer>
+                    <Grid Padding="0,10">
+                        <ActivityIndicator IsRunning="{Binding IsLoadingMore}"
+                                          IsVisible="{Binding IsLoadingMore}"
+                                          HeightRequest="30"/>
+                    </Grid>
+                </CollectionView.Footer>
             </CollectionView>
         </RefreshView>
     </Grid>

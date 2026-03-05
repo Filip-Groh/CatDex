@@ -11,6 +11,12 @@ namespace CatDex.ViewModels {
         protected readonly INavigationService _navigationService;
         protected readonly IDialogService _dialogService;
 
+        private const int PageSize = 20;
+        private int _currentPage = 0;
+        private bool _hasMoreItems = true;
+        private readonly SemaphoreSlim _loadSemaphore = new(1, 1);
+        private bool _isInitialized = false;
+
         public ObservableCollection<Cat> Cats { get; } = new();
 
         public ObservableCollection<Breed> Breeds { get; } = new();
@@ -27,85 +33,143 @@ namespace CatDex.ViewModels {
         [ObservableProperty]
         public partial Breed? SelectedBreed { get; set; }
 
+        [ObservableProperty]
+        public partial bool IsLoadingMore { get; set; }
+
         protected CatListViewModelBase(ICatRepositoryService catRepositoryService, INavigationService navigationService, IDialogService dialogService) {
             _catRepositoryService = catRepositoryService;
             _navigationService = navigationService;
             _dialogService = dialogService;
-
-            Task.Run(async () => {
-                await LoadBreedsAsync();
-                await LoadCatsAsync();
-            });
         }
 
-        protected abstract Task<IEnumerable<Cat>> GetCatsAsync(string? breedId);
+        public async Task InitializeAsync() {
+            if (_isInitialized)
+                return;
+
+            _isInitialized = true;
+            await LoadBreedsAsync();
+            await LoadCatsAsync();
+        }
+
+        protected abstract Task<IEnumerable<Cat>> GetCatsAsync(string? breedId, int skip, int take);
 
         protected async Task LoadBreedsAsync() {
             try {
                 var breeds = await _catRepositoryService.GetBreedsAsync();
 
-                Breeds.Clear();
-                Breeds.Add(new Breed { Id = "", Name = "All Breeds" });
-                Breeds.Add(new Breed { Id = "none", Name = "No Breed" });
-                foreach (var breed in breeds.OrderBy(b => b.Name)) {
-                    Breeds.Add(breed);
-                }
+                await MainThread.InvokeOnMainThreadAsync(() => {
+                    Breeds.Clear();
+                    Breeds.Add(new Breed { Id = "", Name = "All Breeds" });
+                    Breeds.Add(new Breed { Id = "none", Name = "No Breed" });
+                    foreach (var breed in breeds.OrderBy(b => b.Name)) {
+                        Breeds.Add(breed);
+                    }
 
-                SelectedBreed = Breeds.FirstOrDefault();
+                    SelectedBreed = Breeds.FirstOrDefault();
+                });
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine($"Error loading breeds: {ex.Message}");
             }
         }
 
-        protected async Task LoadCatsAsync() {
+        public async Task LoadCatsAsync() {
             if (IsBusy)
                 return;
 
+            await _loadSemaphore.WaitAsync();
             try {
                 IsBusy = true;
+                _currentPage = 0;
+                _hasMoreItems = true;
 
                 IEnumerable<Cat> cats;
 
                 if (SelectedBreed?.Id == "none") {
-                    var allCats = await GetCatsAsync(null);
+                    var allCats = await GetCatsAsync(null, 0, PageSize);
                     cats = allCats.Where(c => c.Breeds == null || !c.Breeds.Any());
                 } else {
                     var breedId = SelectedBreed?.Id == "" ? null : SelectedBreed?.Id;
-                    cats = await GetCatsAsync(breedId);
+                    cats = await GetCatsAsync(breedId, 0, PageSize);
                 }
 
-                Cats.Clear();
-                foreach (var cat in cats) {
-                    Cats.Add(cat);
-                }
+                await MainThread.InvokeOnMainThreadAsync(() => {
+                    Cats.Clear();
+                    foreach (var cat in cats) {
+                        Cats.Add(cat);
+                    }
+                });
+
+                _hasMoreItems = cats.Count() >= PageSize;
             } finally {
                 IsBusy = false;
+                _loadSemaphore.Release();
+            }
+        }
+
+        [RelayCommand]
+        async Task LoadMoreCats() {
+            if (IsBusy || IsLoadingMore || !_hasMoreItems)
+                return;
+
+            await _loadSemaphore.WaitAsync();
+            try {
+                IsLoadingMore = true;
+                _currentPage++;
+
+                IEnumerable<Cat> cats;
+
+                if (SelectedBreed?.Id == "none") {
+                    var allCats = await GetCatsAsync(null, _currentPage * PageSize, PageSize);
+                    cats = allCats.Where(c => c.Breeds == null || !c.Breeds.Any());
+                } else {
+                    var breedId = SelectedBreed?.Id == "" ? null : SelectedBreed?.Id;
+                    cats = await GetCatsAsync(breedId, _currentPage * PageSize, PageSize);
+                }
+
+                await MainThread.InvokeOnMainThreadAsync(() => {
+                    foreach (var cat in cats) {
+                        Cats.Add(cat);
+                    }
+                });
+
+                _hasMoreItems = cats.Count() >= PageSize;
+            } finally {
+                IsLoadingMore = false;
+                _loadSemaphore.Release();
             }
         }
 
         [RelayCommand]
         async Task OnRefresh() {
+            await _loadSemaphore.WaitAsync();
             try {
                 IsBusy = true;
                 IsRefreshing = true;
+                _currentPage = 0;
+                _hasMoreItems = true;
 
                 IEnumerable<Cat> cats;
 
                 if (SelectedBreed?.Id == "none") {
-                    var allCats = await GetCatsAsync(null);
+                    var allCats = await GetCatsAsync(null, 0, PageSize);
                     cats = allCats.Where(c => c.Breeds == null || !c.Breeds.Any());
                 } else {
                     var breedId = SelectedBreed?.Id == "" ? null : SelectedBreed?.Id;
-                    cats = await GetCatsAsync(breedId);
+                    cats = await GetCatsAsync(breedId, 0, PageSize);
                 }
 
-                Cats.Clear();
-                foreach (var cat in cats) {
-                    Cats.Add(cat);
-                }
+                await MainThread.InvokeOnMainThreadAsync(() => {
+                    Cats.Clear();
+                    foreach (var cat in cats) {
+                        Cats.Add(cat);
+                    }
+                });
+
+                _hasMoreItems = cats.Count() >= PageSize;
             } finally {
                 IsBusy = false;
                 IsRefreshing = false;
+                _loadSemaphore.Release();
             }
         }
 
@@ -139,7 +203,10 @@ namespace CatDex.ViewModels {
                     return;
 
                 await _catRepositoryService.DeleteCatAsync(cat.Id);
-                Cats.Remove(cat);
+
+                await MainThread.InvokeOnMainThreadAsync(() => {
+                    Cats.Remove(cat);
+                });
             } catch (Exception ex) {
                 await _dialogService.ShowAlertAsync("Error", $"Failed to delete cat: {ex.Message}", "OK");
             }
@@ -159,7 +226,10 @@ namespace CatDex.ViewModels {
         }
 
         partial void OnSelectedBreedChanged(Breed? value) {
-            Task.Run(async () => await LoadCatsAsync());
+            if (!_isInitialized)
+                return;
+
+            _ = LoadCatsAsync();
         }
     }
 }

@@ -134,6 +134,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Messages\" />
 	  <Folder Include="Resources\Images\" />
 	  <Folder Include="Resources\Raw\" />
 	</ItemGroup>

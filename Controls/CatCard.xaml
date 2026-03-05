@@ -14,17 +14,17 @@
                 <AppThemeBinding Light="White" Dark="#1E1E1E" />
             </Frame.BackgroundColor>
             <Grid>
-                <Grid.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding Source={x:Reference this}, Path=TappedCommand}"
-                                          CommandParameter="{Binding .}"/>
-                </Grid.GestureRecognizers>
-
                 <!-- Gallery Mode -->
                 <Grid IsVisible="{Binding Source={x:Reference this}, Path=IsListMode, Converter={StaticResource InvertedBoolConverter}}">
                     <controls:WebDBImage Url="{Binding Url}" 
                                          ImageData="{Binding StoredImage}"
                                          HeightRequest="200"
-                                         EnableFullScreenOnTap="False"/>
+                                         EnableFullScreenOnTap="False">
+                        <controls:WebDBImage.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={x:Reference this}, Path=TappedCommand}"
+                                                  CommandParameter="{Binding .}"/>
+                        </controls:WebDBImage.GestureRecognizers>
+                    </controls:WebDBImage>
                 </Grid>
 
                 <!-- List Mode -->
@@ -35,11 +35,20 @@
                                          HeightRequest="100"
                                          WidthRequest="120"
                                          EnableFullScreenOnTap="False"
-                                         Grid.Column="0"/>
+                                         Grid.Column="0">
+                        <controls:WebDBImage.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={x:Reference this}, Path=TappedCommand}"
+                                                  CommandParameter="{Binding .}"/>
+                        </controls:WebDBImage.GestureRecognizers>
+                    </controls:WebDBImage>
 
                     <VerticalStackLayout Grid.Column="1"
                                          Padding="8"
                                          VerticalOptions="Center">
+                        <VerticalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={x:Reference this}, Path=TappedCommand}"
+                                                  CommandParameter="{Binding .}"/>
+                        </VerticalStackLayout.GestureRecognizers>
                         <Label FontSize="16"
                                FontAttributes="Bold"
                                LineBreakMode="TailTruncation"
@@ -64,13 +73,13 @@
                                            Margin="8"
                                            Grid.Column="2">
                         <Button
-                            Command="{Binding Source={x:Reference this}, Path=ToggleFavoriteCommand}"
-                            CommandParameter="{Binding .}"
+                            x:Name="FavoriteButton"
+                            Clicked="FavoriteButton_Clicked"
                             WidthRequest="40"
                             HeightRequest="40"
                             CornerRadius="20"
                             Padding="8"
-                            ImageSource="{Binding IsFavorite, Converter={StaticResource FavoriteToIconConverter}}">
+                            ImageSource="{Binding Source={x:Reference this}, Path=FavoriteIcon}">
                             <Button.BackgroundColor>
                                 <AppThemeBinding Light="White" Dark="Transparent" />
                             </Button.BackgroundColor>

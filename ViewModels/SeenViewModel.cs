@@ -7,8 +7,8 @@ namespace CatDex.ViewModels {
             : base(catRepositoryService, navigationService, dialogService) {
         }
 
-        protected override async Task<IEnumerable<Cat>> GetCatsAsync(string? breedId) {
-            return await _catRepositoryService.GetStoredCatsAsync(breedId);
+        protected override async Task<IEnumerable<Cat>> GetCatsAsync(string? breedId, int skip, int take) {
+            return await _catRepositoryService.GetStoredCatsAsync(breedId, skip, take);
         }
     }
 }
