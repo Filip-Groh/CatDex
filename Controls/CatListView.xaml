@@ -65,7 +65,7 @@
         </Grid>
 
         <RefreshView IsRefreshing="{Binding IsRefreshing}"
-                     Command="{Binding OnRefreshCommand}"
+                     Command="{Binding RefreshCommand}"
                      Grid.Row="2"
                      Margin="8,0">
             <CollectionView ItemsSource="{Binding Cats}"

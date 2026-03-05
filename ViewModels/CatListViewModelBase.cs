@@ -85,10 +85,26 @@ namespace CatDex.ViewModels {
 
         [RelayCommand]
         async Task OnRefresh() {
-            IsRefreshing = true;
             try {
-                await LoadCatsAsync();
+                IsBusy = true;
+                IsRefreshing = true;
+
+                IEnumerable<Cat> cats;
+
+                if (SelectedBreed?.Id == "none") {
+                    var allCats = await GetCatsAsync(null);
+                    cats = allCats.Where(c => c.Breeds == null || !c.Breeds.Any());
+                } else {
+                    var breedId = SelectedBreed?.Id == "" ? null : SelectedBreed?.Id;
+                    cats = await GetCatsAsync(breedId);
+                }
+
+                Cats.Clear();
+                foreach (var cat in cats) {
+                    Cats.Add(cat);
+                }
             } finally {
+                IsBusy = false;
                 IsRefreshing = false;
             }
         }
