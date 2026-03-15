@@ -8,44 +8,33 @@ namespace CatDex.ViewModels;
 
 [QueryProperty(nameof(ImageUrl), AppConstants.QueryParameters.ImageUrl)]
 [QueryProperty(nameof(ImageData), AppConstants.QueryParameters.ImageData)]
-public partial class FullScreenImageViewModel : ObservableObject
+public partial class FullScreenImageViewModel(IFileSaverService fileSaverService, INavigationService navigationService, IDialogService dialogService) : ObservableObject
 {
-	private readonly IFileSaverService _fileSaverService;
-	private readonly INavigationService _navigationService;
-	private readonly IDialogService _dialogService;
+    [ObservableProperty]
+    public partial string? ImageUrl { get; set; }
 
-	[ObservableProperty]
-	private string? imageUrl;
+    [ObservableProperty]
+    public partial ImageData? ImageData { get; set; }
 
-	[ObservableProperty]
-	private ImageData? imageData;
-
-	public FullScreenImageViewModel(IFileSaverService fileSaverService, INavigationService navigationService, IDialogService dialogService)
-	{
-		_fileSaverService = fileSaverService;
-		_navigationService = navigationService;
-		_dialogService = dialogService;
-	}
-
-	[RelayCommand]
+    [RelayCommand]
 	private async Task Close()
 	{
-		await _navigationService.GoBackAsync();
+		await navigationService.GoBackAsync();
 	}
 
 	[RelayCommand]
 	private async Task Download()
 	{
 		var fileName = string.Format(AppConstants.Files.ImageFileNameFormat, DateTime.Now);
-		var success = await _fileSaverService.SaveImageAsync(ImageUrl, ImageData?.Bytes, fileName);
+		var success = await fileSaverService.SaveImageAsync(ImageUrl, ImageData?.Bytes, fileName);
 
 		if (success)
 		{
-			await _dialogService.ShowAlertAsync("Success", "Image saved successfully!", "OK");
+			await dialogService.ShowAlertAsync("Success", "Image saved successfully!", "OK");
 		}
 		else
 		{
-			await _dialogService.ShowAlertAsync("Error", "Failed to save image.", "OK");
+			await dialogService.ShowAlertAsync("Error", "Failed to save image.", "OK");
 		}
 	}
 }

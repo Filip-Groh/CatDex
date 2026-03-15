@@ -53,7 +53,7 @@ public class FileSaverService : IFileSaverService
 	}
 
 #if ANDROID
-	private async Task SaveToGalleryAndroid(byte[] data, string fileName)
+	private static async Task SaveToGalleryAndroid(byte[] data, string fileName)
 	{
 		var picturesPath = Android.OS.Environment.GetExternalStoragePublicDirectory(
 			Android.OS.Environment.DirectoryPictures);
@@ -70,7 +70,7 @@ public class FileSaverService : IFileSaverService
 #endif
 
 #if IOS || MACCATALYST
-	private Task SaveToGalleryIOS(byte[] data, string fileName)
+	private static Task SaveToGalleryIOS(byte[] data, string fileName)
 	{
 		var tempFilePath = Path.Combine(FileSystem.Current.CacheDirectory, fileName);
 		File.WriteAllBytes(tempFilePath, data);
@@ -93,7 +93,7 @@ public class FileSaverService : IFileSaverService
 #endif
 
 #if WINDOWS
-	private async Task SaveToGalleryWindows(byte[] data, string fileName)
+	private static async Task SaveToGalleryWindows(byte[] data, string fileName)
 	{
 		var picturesPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 		var catDexFolder = Path.Combine(picturesPath, "CatDex");

@@ -14,9 +14,9 @@ namespace CatDex.ViewModels {
         private readonly IDialogService _dialogService;
         private int _currentPage = 0;
 
-        public ObservableCollection<DetailedCatDTO> Cats { get; } = new();
-        public Dictionary<string, bool> StoredCatsFavoriteStatus { get; } = new();
-        public HashSet<string> PreviouslyStoredCats { get; } = new();
+        public ObservableCollection<DetailedCatDTO> Cats { get; } = [];
+        public Dictionary<string, bool> StoredCatsFavoriteStatus { get; } = [];
+        public HashSet<string> PreviouslyStoredCats { get; } = [];
 
         [ObservableProperty]
         public partial int StorageStatusVersion { get; set; }
@@ -111,7 +111,7 @@ namespace CatDex.ViewModels {
                                     Url = cat.Url,
                                     Width = cat.Width,
                                     Height = cat.Height,
-                                    Breeds = new List<BreedDTO>()
+                                    Breeds = []
                                 };
                             }
                         }

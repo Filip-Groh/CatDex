@@ -37,8 +37,8 @@ namespace CatDex.ViewModels
         [ObservableProperty]
         public partial bool IsBreedPickerVisible { get; set; }
 
-        public ObservableCollection<Breed> AvailableBreeds { get; } = new();
-        public ObservableCollection<Breed> SelectedBreeds { get; } = new();
+        public ObservableCollection<Breed> AvailableBreeds { get; } = [];
+        public ObservableCollection<Breed> SelectedBreeds { get; } = [];
 
         public CreateViewModel(ICatRepositoryService repository, INavigationService navigationService)
         {
@@ -134,7 +134,7 @@ namespace CatDex.ViewModels
                     Width = Width,
                     Height = Height,
                     Bytes = ImageBytes,
-                    BreedIds = SelectedBreeds.Select(b => b.Id).ToList()
+                    BreedIds = [.. SelectedBreeds.Select(b => b.Id)]
                 };
 
                 var createdCat = await _repository.CreateCatAsync(customCat);
@@ -163,12 +163,7 @@ namespace CatDex.ViewModels
         [RelayCommand]
         void ToggleBreed(Breed breed)
         {
-            if (SelectedBreeds.Contains(breed))
-            {
-                SelectedBreeds.Remove(breed);
-            }
-            else
-            {
+            if (!SelectedBreeds.Remove(breed)) {
                 SelectedBreeds.Add(breed);
             }
             OnPropertyChanged(nameof(SelectedBreeds));
@@ -183,10 +178,7 @@ namespace CatDex.ViewModels
         [RelayCommand]
         void RemoveBreed(Breed breed)
         {
-            if (SelectedBreeds.Contains(breed))
-            {
-                SelectedBreeds.Remove(breed);
-            }
+            SelectedBreeds.Remove(breed);
         }
 
         public bool IsBreedSelected(Breed breed)

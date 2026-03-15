@@ -87,6 +87,6 @@ namespace CatDex.Models {
 
         public DateTime? InvalidationDate { get; set; }
 
-        public ICollection<Cat> Cats { get; set; } = new List<Cat>();
+        public ICollection<Cat> Cats { get; set; } = [];
     }
 }

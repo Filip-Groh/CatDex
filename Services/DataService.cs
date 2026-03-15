@@ -5,27 +5,21 @@ using CatDex.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CatDex.Services {
-    public class DataService : IDataService {
-        private readonly IDbContextFactory<AppDbContext> _contextFactory;
-
-        public DataService(IDbContextFactory<AppDbContext> contextFactory) {
-            _contextFactory = contextFactory;
-        }
-
-        public async Task<Breed> GetBreedAsync(string id) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+    public class DataService(IDbContextFactory<AppDbContext> contextFactory) : IDataService {
+        public async Task<Breed?> GetBreedAsync(string id) {
+            await using var db = await contextFactory.CreateDbContextAsync();
             var breed = await db.Breeds.AsNoTracking().Where(breed => breed.Id == id).FirstOrDefaultAsync();
             return breed;
         }
 
         public async Task<ICollection<Breed>> GetBreedsAsync() {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var breeds = await db.Breeds.AsNoTracking().ToArrayAsync();
             return breeds;
         }
 
         public async Task<Breed> CreateBreedAsync(BreedDTO breed) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var createdBreed = new Breed {
                 Id = breed.Id,
                 Name = breed.Name,
@@ -81,12 +75,8 @@ namespace CatDex.Services {
         }
 
         public async Task<Breed> UpdateBreedAsync(string id, BreedDTO breed) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
-            var existingBreed = await db.Breeds.FindAsync(id);
-
-            if (existingBreed == null) {
-                throw new InvalidOperationException($"Breed with ID {id} not found.");
-            }
+            await using var db = await contextFactory.CreateDbContextAsync();
+            var existingBreed = await db.Breeds.FindAsync(id) ?? throw new InvalidOperationException($"Breed with ID {id} not found.");
 
             existingBreed.Name = breed.Name;
             existingBreed.Description = breed.Description;
@@ -139,7 +129,7 @@ namespace CatDex.Services {
 
         public async Task<Cat?> GetCatAsync(string id) {
             try {
-                await using var db = await _contextFactory.CreateDbContextAsync();
+                await using var db = await contextFactory.CreateDbContextAsync();
                 var cat = await db.Cats.AsNoTracking()
                     .Include(cat => cat.Breeds)
                     .Include(cat => cat.StoredImage)
@@ -152,7 +142,7 @@ namespace CatDex.Services {
         }
 
         public async Task<ICollection<Cat>> GetCatsAsync(string? breedId = null) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var cats = db.Cats.AsNoTracking()
                 .Include(cat => cat.Breeds)
                 .Include(cat => cat.StoredImage)
@@ -166,7 +156,7 @@ namespace CatDex.Services {
         }
 
         public async Task<ICollection<Cat>> GetCatsAsync(string? breedId, int skip, int take) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var cats = db.Cats.AsNoTracking()
                 .Include(cat => cat.Breeds)
                 .Include(cat => cat.StoredImage)
@@ -180,7 +170,7 @@ namespace CatDex.Services {
         }
 
         public async Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId = null) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var cats = db.Cats.AsNoTracking()
                 .Include(cat => cat.Breeds)
                 .Include(cat => cat.StoredImage)
@@ -195,7 +185,7 @@ namespace CatDex.Services {
         }
 
         public async Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId, int skip, int take) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var cats = db.Cats.AsNoTracking()
                 .Include(cat => cat.Breeds)
                 .Include(cat => cat.StoredImage)
@@ -210,7 +200,7 @@ namespace CatDex.Services {
         }
 
         public async Task<Cat> StoreCatAsync(DetailedCatDTO cat) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var createdCat = new Cat {
                 Id = cat.Id,
                 Url = cat.Url,
@@ -240,7 +230,7 @@ namespace CatDex.Services {
         }
 
         public async Task<Cat> CreateCatAsync(CustomCatDTO cat) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var catObject = new Cat {
                 Id = cat.Id,
                 Url = null,
@@ -273,12 +263,8 @@ namespace CatDex.Services {
         }
 
         public async Task<Cat> UpdateCatAsync(string id, DetailedCatDTO cat) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
-            var existingCat = await db.Cats.FindAsync(id);
-
-            if (existingCat == null) {
-                throw new InvalidOperationException($"Breed with ID {id} not found.");
-            }
+            await using var db = await contextFactory.CreateDbContextAsync();
+            var existingCat = await db.Cats.FindAsync(id) ?? throw new InvalidOperationException($"Breed with ID {id} not found.");
 
             existingCat.Url = cat.Url;
             existingCat.Width = cat.Width;
@@ -293,12 +279,8 @@ namespace CatDex.Services {
         }
 
         public async Task<Cat> DeleteCatAsync(string id) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
-            var existingCat = await db.Cats.Include(cat => cat.Breeds).FirstAsync(cat => cat.Id == id);
-            
-            if (existingCat == null) {
-                throw new InvalidOperationException($"Cat with ID {id} not found.");
-            }
+            await using var db = await contextFactory.CreateDbContextAsync();
+            var existingCat = await db.Cats.Include(cat => cat.Breeds).FirstAsync(cat => cat.Id == id) ?? throw new InvalidOperationException($"Cat with ID {id} not found.");
 
             db.Cats.Remove(existingCat);
 
@@ -310,12 +292,8 @@ namespace CatDex.Services {
         }
 
         public async Task<Cat> SetCatIsFavorite(string id, bool isFavorite) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
-            var existingCat = await db.Cats.FindAsync(id);
-
-            if (existingCat == null) {
-                throw new InvalidOperationException($"Breed with ID {id} not found.");
-            }
+            await using var db = await contextFactory.CreateDbContextAsync();
+            var existingCat = await db.Cats.FindAsync(id) ?? throw new InvalidOperationException($"Breed with ID {id} not found.");
 
             existingCat.IsFavorite = isFavorite;
 
@@ -327,7 +305,7 @@ namespace CatDex.Services {
         }
 
         public async Task<int> DeleteNonCreatedNonFavoriteCatsAsync() {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var catsToDelete = await db.Cats
                 .Include(cat => cat.StoredImage)
                 .Where(cat => !cat.IsFavorite && !cat.IsUserCreated)
@@ -343,14 +321,10 @@ namespace CatDex.Services {
         }
 
         public async Task<Cat> StoreCatImageAsync(string catId, byte[] imageBytes) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var existingCat = await db.Cats
                 .Include(cat => cat.StoredImage)
-                .FirstOrDefaultAsync(cat => cat.Id == catId);
-
-            if (existingCat == null) {
-                throw new InvalidOperationException($"Cat with ID {catId} not found.");
-            }
+                .FirstOrDefaultAsync(cat => cat.Id == catId) ?? throw new InvalidOperationException($"Cat with ID {catId} not found.");
 
             if (existingCat.StoredImage != null) {
                 existingCat.StoredImage.Bytes = imageBytes;
@@ -373,7 +347,7 @@ namespace CatDex.Services {
         }
 
         public async Task DeleteCatImageAsync(string catId) {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var image = await db.Images.FindAsync(catId);
 
             if (image != null) {
@@ -383,7 +357,7 @@ namespace CatDex.Services {
         }
 
         public async Task<ICollection<Cat>> GetCatsWithoutImagesAsync() {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var cats = await db.Cats
                 .AsNoTracking()
                 .Include(cat => cat.Breeds)
@@ -395,7 +369,7 @@ namespace CatDex.Services {
         }
 
         public async Task<(int TotalCats, int FavoriteCats, int CreatedCats, int TotalStoredImages, int UserCreatedImages, int CachedImages)> GetStatisticsAsync() {
-            await using var db = await _contextFactory.CreateDbContextAsync();
+            await using var db = await contextFactory.CreateDbContextAsync();
             var stats = db.Cats.AsNoTracking()
                 .Select(c => new {
                     c.IsFavorite,

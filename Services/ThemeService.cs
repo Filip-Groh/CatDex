@@ -22,9 +22,7 @@ namespace CatDex.Services {
 
             Preferences.Set(ThemeKey, themeName);
             
-            if (Application.Current != null) {
-                Application.Current.UserAppTheme = theme;
-            }
+            Application.Current?.UserAppTheme = theme;
         }
 
         public string GetThemeName() {

@@ -43,22 +43,22 @@ namespace CatDex.ViewModels {
         public partial bool CacheAllImages { get; set; }
 
         [ObservableProperty]
-        private bool _isCaching;
+        public partial bool IsCaching { get; set; }
 
         [ObservableProperty]
-        private int _cachingProgress;
+        public partial int CachingProgress { get; set; }
 
         [ObservableProperty]
-        private int _cachingTotal;
+        public partial int CachingTotal { get; set; }
 
         public double CachingProgressRatio => CachingTotal > 0 ? (double)CachingProgress / CachingTotal : 0;
 
-        public ObservableCollection<string> ThemeOptions { get; } = new ObservableCollection<string> 
-        { 
+        public ObservableCollection<string> ThemeOptions { get; } =
+        [
             "System", 
             "Light", 
             "Dark" 
-        };
+        ];
 
         public SettingsViewModel(ICatRepositoryService catRepositoryService, IThemeService themeService, IDialogService dialogService) {
             _catRepositoryService = catRepositoryService;

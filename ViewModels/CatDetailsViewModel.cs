@@ -6,11 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace CatDex.ViewModels {
     [QueryProperty(nameof(CatId), AppConstants.QueryParameters.CatId)]
-    public partial class CatDetailsViewModel : ObservableObject {
-        private readonly ICatRepositoryService _repository;
-        private readonly INavigationService _navigationService;
-        private readonly IDialogService _dialogService;
-
+    public partial class CatDetailsViewModel(ICatRepositoryService repository, INavigationService navigationService, IDialogService dialogService) : ObservableObject {
         [ObservableProperty]
         public partial string? CatId { get; set; }
 
@@ -19,12 +15,6 @@ namespace CatDex.ViewModels {
 
         [ObservableProperty]
         public partial bool IsLoading { get; set; }
-
-        public CatDetailsViewModel(ICatRepositoryService repository, INavigationService navigationService, IDialogService dialogService) {
-            _repository = repository;
-            _navigationService = navigationService;
-            _dialogService = dialogService;
-        }
 
         partial void OnCatIdChanged(string? value) {
             if (!string.IsNullOrEmpty(value)) {
@@ -39,10 +29,10 @@ namespace CatDex.ViewModels {
             IsLoading = true;
 
             try {
-                Cat = await _repository.GetCatByIdAsync(CatId);
+                Cat = await repository.GetCatByIdAsync(CatId);
             } catch (Exception ex) when (ex.Message.Contains("rate limit", StringComparison.OrdinalIgnoreCase)) {
                 System.Diagnostics.Debug.WriteLine($"Rate limit hit when loading cat {CatId}.");
-                await _dialogService.ShowAlertAsync("Rate Limit", "API rate limit exceeded. Please try again later.", "OK");
+                await dialogService.ShowAlertAsync("Rate Limit", "API rate limit exceeded. Please try again later.", "OK");
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine($"Error loading cat {CatId}: {ex.Message}");
             } finally {
@@ -57,7 +47,7 @@ namespace CatDex.ViewModels {
 
             try {
                 Cat.IsFavorite = !Cat.IsFavorite;
-                await _repository.SetCatIsFavorite(Cat.Id, Cat.IsFavorite);
+                await repository.SetCatIsFavorite(Cat.Id, Cat.IsFavorite);
                 OnPropertyChanged(nameof(Cat));
             } catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine($"Error toggling favorite: {ex.Message}");
@@ -71,7 +61,7 @@ namespace CatDex.ViewModels {
                 return;
 
             try {
-                bool confirm = await _dialogService.ShowConfirmationAsync(
+                bool confirm = await dialogService.ShowConfirmationAsync(
                     "Delete Cat",
                     $"Are you sure you want to delete this cat (ID: {Cat.Id})?",
                     "Delete",
@@ -80,21 +70,21 @@ namespace CatDex.ViewModels {
                 if (!confirm)
                     return;
 
-                await _repository.DeleteCatAsync(Cat.Id);
-                await _navigationService.GoBackAsync();
+                await repository.DeleteCatAsync(Cat.Id);
+                await navigationService.GoBackAsync();
             }
             catch (Exception ex) {
-                await _dialogService.ShowAlertAsync("Error", $"Failed to delete cat: {ex.Message}", "OK");
+                await dialogService.ShowAlertAsync("Error", $"Failed to delete cat: {ex.Message}", "OK");
             }
         }
 
         [RelayCommand]
         async Task GoBack() {
-            await _navigationService.GoBackAsync();
+            await navigationService.GoBackAsync();
         }
 
         [RelayCommand]
-        async Task OpenUrl(string url) {
+        static async Task OpenUrl(string url) {
             if (string.IsNullOrWhiteSpace(url))
                 return;
 

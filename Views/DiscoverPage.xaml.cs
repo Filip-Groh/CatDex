@@ -12,8 +12,7 @@ public partial class DiscoverPage : ContentPage
 
 	private async void OnCollectionViewScrolled(object sender, ItemsViewScrolledEventArgs e)
 	{
-		var collectionView = (CollectionView)sender;
-		var viewModel = (DiscoveryViewModel)BindingContext;
+        var viewModel = (DiscoveryViewModel)BindingContext;
 
 		int currentIndex = e.FirstVisibleItemIndex;
 

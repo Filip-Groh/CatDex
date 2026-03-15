@@ -6,10 +6,10 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
 
 namespace CatDex.ViewModels {
-    public abstract partial class CatListViewModelBase : ObservableObject {
-        protected readonly ICatRepositoryService _catRepositoryService;
-        protected readonly INavigationService _navigationService;
-        protected readonly IDialogService _dialogService;
+    public abstract partial class CatListViewModelBase(ICatRepositoryService catRepositoryService, INavigationService navigationService, IDialogService dialogService) : ObservableObject {
+        protected readonly ICatRepositoryService _catRepositoryService = catRepositoryService;
+        protected readonly INavigationService _navigationService = navigationService;
+        protected readonly IDialogService _dialogService = dialogService;
 
         private const int PageSize = 20;
         private int _currentPage = 0;
@@ -17,9 +17,9 @@ namespace CatDex.ViewModels {
         private readonly SemaphoreSlim _loadSemaphore = new(1, 1);
         private bool _isInitialized = false;
 
-        public ObservableCollection<Cat> Cats { get; } = new();
+        public ObservableCollection<Cat> Cats { get; } = [];
 
-        public ObservableCollection<Breed> Breeds { get; } = new();
+        public ObservableCollection<Breed> Breeds { get; } = [];
 
         [ObservableProperty]
         public partial bool IsBusy { get; set; }
@@ -35,12 +35,6 @@ namespace CatDex.ViewModels {
 
         [ObservableProperty]
         public partial bool IsLoadingMore { get; set; }
-
-        protected CatListViewModelBase(ICatRepositoryService catRepositoryService, INavigationService navigationService, IDialogService dialogService) {
-            _catRepositoryService = catRepositoryService;
-            _navigationService = navigationService;
-            _dialogService = dialogService;
-        }
 
         public async Task InitializeAsync() {
             if (_isInitialized)
@@ -87,7 +81,7 @@ namespace CatDex.ViewModels {
 
                 if (SelectedBreed?.Id == "none") {
                     var allCats = await GetCatsAsync(null, 0, PageSize);
-                    cats = allCats.Where(c => c.Breeds == null || !c.Breeds.Any());
+                    cats = allCats.Where(c => c.Breeds == null || c.Breeds.Count == 0);
                 } else {
                     var breedId = SelectedBreed?.Id == "" ? null : SelectedBreed?.Id;
                     cats = await GetCatsAsync(breedId, 0, PageSize);
@@ -121,7 +115,7 @@ namespace CatDex.ViewModels {
 
                 if (SelectedBreed?.Id == "none") {
                     var allCats = await GetCatsAsync(null, _currentPage * PageSize, PageSize);
-                    cats = allCats.Where(c => c.Breeds == null || !c.Breeds.Any());
+                    cats = allCats.Where(c => c.Breeds == null || c.Breeds.Count == 0);
                 } else {
                     var breedId = SelectedBreed?.Id == "" ? null : SelectedBreed?.Id;
                     cats = await GetCatsAsync(breedId, _currentPage * PageSize, PageSize);
@@ -153,7 +147,7 @@ namespace CatDex.ViewModels {
 
                 if (SelectedBreed?.Id == "none") {
                     var allCats = await GetCatsAsync(null, 0, PageSize);
-                    cats = allCats.Where(c => c.Breeds == null || !c.Breeds.Any());
+                    cats = allCats.Where(c => c.Breeds == null || c.Breeds.Count == 0);
                 } else {
                     var breedId = SelectedBreed?.Id == "" ? null : SelectedBreed?.Id;
                     cats = await GetCatsAsync(breedId, 0, PageSize);
