@@ -57,12 +57,20 @@ namespace CatDex.ViewModels {
             if (IsBusy || IsOffline)
                 return;
 
+            bool initialLoadAttempted = false;
+            bool successOnFirstCat = false;
+
             try {
                 IsBusy = true;
+                initialLoadAttempted = Cats.Count == 0;
+                int limit = initialLoadAttempted ? 1 : 10;
 
-                var newCats = await _repository.GetNewCatsAsync(page: _currentPage, limit: 10);
+                var newCats = await _repository.GetNewCatsAsync(page: _currentPage, limit: limit);
 
                 if (newCats.Count > 0) {
+                    if (initialLoadAttempted) {
+                        successOnFirstCat = true;
+                    }
                     var storedCats = await _repository.GetStoredCatsAsync();
 
                     foreach (var storedCat in storedCats) {
@@ -115,6 +123,10 @@ namespace CatDex.ViewModels {
                 }
             } finally {
                 IsBusy = false;
+            }
+
+            if (successOnFirstCat) {
+                _ = Task.Run(async () => await OnThresholdReached());
             }
         }
 
