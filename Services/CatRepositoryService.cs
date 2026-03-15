@@ -184,12 +184,12 @@ namespace CatDex.Services {
             return storedCat;
         }
 
-        public async Task<ICollection<Cat>> GetStoredCatsAsync(string? breedId = null) {
+        public async Task<ICollection<Cat>> GetStoredCatsAsync(string? breedId = null, bool updateIfInvalid = true) {
             await GetBreedsAsync(); // Ensure breeds are up to date before fetching cats
 
             var cats = await _data.GetCatsAsync(breedId);
 
-            if (!_connectivity.IsConnected) {
+            if (!_connectivity.IsConnected || !updateIfInvalid) {
                 return cats;
             }
 
@@ -440,6 +440,10 @@ namespace CatDex.Services {
 
         public async Task<int> DeleteNonCreatedNonFavoriteCatsAsync() {
             return await _data.DeleteNonCreatedNonFavoriteCatsAsync();
+        }
+
+        public async Task<(int TotalCats, int FavoriteCats, int CreatedCats, int TotalStoredImages, int UserCreatedImages, int CachedImages)> GetStatisticsAsync() {
+            return await _data.GetStatisticsAsync();
         }
 
         public async Task<Cat> StoreCatImageAsync(string catId, byte[] imageBytes) {

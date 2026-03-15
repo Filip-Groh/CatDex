@@ -18,14 +18,11 @@ public partial class SeenPage : ContentPage
 	{
 		base.OnAppearing();
 
-		if (_isFirstAppearing)
-		{
-			_isFirstAppearing = false;
-			await _viewModel.InitializeAsync();
-		}
-		else
-		{
-			await _viewModel.LoadCatsAsync();
-		}
-	}
+        if (_isFirstAppearing) {
+            _isFirstAppearing = false;
+            _ = Task.Run(async () => await _viewModel.InitializeAsync());
+        } else {
+            _ = Task.Run(async () => await _viewModel.LoadCatsAsync());
+        }
+    }
 }

@@ -22,5 +22,6 @@ namespace CatDex.Services.Interfaces {
         public Task<Cat> StoreCatImageAsync(string catId, byte[] imageBytes);
         public Task DeleteCatImageAsync(string catId);
         public Task<ICollection<Cat>> GetCatsWithoutImagesAsync();
+        public Task<(int TotalCats, int FavoriteCats, int CreatedCats, int TotalStoredImages, int UserCreatedImages, int CachedImages)> GetStatisticsAsync();
     }
 }

@@ -393,5 +393,24 @@ namespace CatDex.Services {
 
             return cats;
         }
+
+        public async Task<(int TotalCats, int FavoriteCats, int CreatedCats, int TotalStoredImages, int UserCreatedImages, int CachedImages)> GetStatisticsAsync() {
+            await using var db = await _contextFactory.CreateDbContextAsync();
+            var stats = db.Cats.AsNoTracking()
+                .Select(c => new {
+                    c.IsFavorite,
+                    c.IsUserCreated,
+                    HasImage = c.StoredImage != null
+                });
+
+            return (
+                TotalCats: stats.Count(),
+                FavoriteCats: stats.Count(s => s.IsFavorite),
+                CreatedCats: stats.Count(s => s.IsUserCreated),
+                TotalStoredImages: stats.Count(s => s.HasImage),
+                UserCreatedImages: stats.Count(s => s.HasImage && s.IsUserCreated),
+                CachedImages: stats.Count(s => s.HasImage && !s.IsUserCreated)
+            );
+        }
     }
 }

@@ -46,9 +46,10 @@ namespace CatDex.ViewModels {
             if (_isInitialized)
                 return;
 
-            _isInitialized = true;
             await LoadBreedsAsync();
             await LoadCatsAsync();
+
+            _isInitialized = true;
         }
 
         protected abstract Task<IEnumerable<Cat>> GetCatsAsync(string? breedId, int skip, int take);

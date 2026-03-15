@@ -21,11 +21,11 @@ public partial class FavoritePage : ContentPage
 		if (_isFirstAppearing)
 		{
 			_isFirstAppearing = false;
-			await _viewModel.InitializeAsync();
+            _ = Task.Run(async () => await _viewModel.InitializeAsync());
 		}
 		else
 		{
-			await _viewModel.LoadCatsAsync();
+            _ = Task.Run(async () => await _viewModel.LoadCatsAsync());
 		}
 	}
 }

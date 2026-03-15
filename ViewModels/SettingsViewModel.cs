@@ -108,17 +108,15 @@ namespace CatDex.ViewModels {
             try {
                 IsBusy = true;
 
-                var cats = await _catRepositoryService.GetStoredCatsAsync();
+                var stats = await _catRepositoryService.GetStatisticsAsync();
 
-                TotalCats = cats.Count;
-                FavoriteCats = cats.Count(cat => cat.IsFavorite);
-                CreatedCats = cats.Count(cat => cat.IsUserCreated);
+                TotalCats = stats.TotalCats;
+                FavoriteCats = stats.FavoriteCats;
+                CreatedCats = stats.CreatedCats;
 
-                // Image statistics
-                var catsWithImages = cats.Where(cat => cat.StoredImage != null).ToList();
-                TotalStoredImages = catsWithImages.Count;
-                UserCreatedImages = catsWithImages.Count(cat => cat.IsUserCreated);
-                CachedImages = catsWithImages.Count(cat => !cat.IsUserCreated);
+                TotalStoredImages = stats.TotalStoredImages;
+                UserCreatedImages = stats.UserCreatedImages;
+                CachedImages = stats.CachedImages;
             } finally {
                 IsBusy = false;
             }

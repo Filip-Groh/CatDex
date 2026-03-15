@@ -9,7 +9,7 @@ namespace CatDex.Services.Interfaces {
         public Task<ICollection<CatDTO>> GetNewCatsAsync(int page = 0, int limit = 10);
         public Task<DetailedCatDTO> GetDetailedCatAsync(string id);
         public Task<Cat?> GetCatByIdAsync(string id);
-        public Task<ICollection<Cat>> GetStoredCatsAsync(string? breedId = null);
+        public Task<ICollection<Cat>> GetStoredCatsAsync(string? breedId = null, bool updateIfInvalid = true);
         public Task<ICollection<Cat>> GetStoredCatsAsync(string? breedId, int skip, int take);
         public Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId = null);
         public Task<ICollection<Cat>> GetFavoriteCatsAsync(string? breedId, int skip, int take);
@@ -18,6 +18,7 @@ namespace CatDex.Services.Interfaces {
         public Task<Cat> DeleteCatAsync(string id);
         public Task<Cat> SetCatIsFavorite(string id, bool isFavorite);
         public Task<int> DeleteNonCreatedNonFavoriteCatsAsync();
+        public Task<(int TotalCats, int FavoriteCats, int CreatedCats, int TotalStoredImages, int UserCreatedImages, int CachedImages)> GetStatisticsAsync();
         public Task<Cat> StoreCatImageAsync(string catId, byte[] imageBytes);
         public Task DeleteNonFavoriteCachedImagesAsync();
         public Task<(int total, int current)> CacheAllImagesAsync(IProgress<(int total, int current)> progress, CancellationToken cancellationToken);
