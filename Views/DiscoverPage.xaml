@@ -4,6 +4,7 @@
              xmlns:dtos="clr-namespace:CatDex.Models.DTOs"
              xmlns:viewmodels="clr-namespace:CatDex.ViewModels"
              xmlns:controls="clr-namespace:CatDex.Controls"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="CatDex.Views.DiscoverPage"
              x:DataType="viewmodels:DiscoveryViewModel"
              BackgroundColor="White">
@@ -32,7 +33,7 @@
                         HorizontalOptions="Fill" 
                         VerticalOptions="Fill"
                         EnableFullScreenOnTap="True" />
-                    <Button
+                    <Button x:Name="EyeButton"
                         ImageSource="eye.svg"
                         WidthRequest="50"
                         HeightRequest="50"
@@ -43,7 +44,11 @@
                         Margin="20"
                         IsEnabled="False"
                         InputTransparent="False"
-                        BackgroundColor="{AppThemeBinding Light=White, Dark=#808080}">
+                        TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                        BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource OffBlack}}">
+                        <Button.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{Binding TextColor, Source={x:Reference EyeButton}}" />
+                        </Button.Behaviors>
                         <Button.IsVisible>
                             <MultiBinding Converter="{StaticResource CatPreviouslyStoredConverter}">
                                 <Binding Path="." />
@@ -59,7 +64,7 @@
                         Padding="10,5"
                         StrokeThickness="0"
                         StrokeShape="RoundRectangle 5"
-                        BackgroundColor="{AppThemeBinding Light=White, Dark=#808080}">
+                        BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource OffBlack}}">
                         <Label 
                             FontSize="24"
                             FontAttributes="Bold"
@@ -74,7 +79,7 @@
                         Padding="20"
                         Spacing="10"
                         InputTransparent="False">
-                        <Button
+                            <Button  x:Name="FavoriteButton"
                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=ToggleFavoriteCommand}"
                             CommandParameter="{Binding .}"
                             WidthRequest="60"
@@ -82,7 +87,11 @@
                             CornerRadius="30"
                             Padding="12"
                             InputTransparent="False"
-                            BackgroundColor="{AppThemeBinding Light=White, Dark=#808080}">
+                            TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource OffBlack}}">
+                            <Button.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="{Binding TextColor, Source={x:Reference FavoriteButton}}" />
+                            </Button.Behaviors>
                             <Button.ImageSource>
                                 <MultiBinding Converter="{StaticResource CatFavoriteStatusConverter}">
                                     <Binding Path="." />
@@ -103,7 +112,7 @@
                                 </DataTrigger>
                             </Button.Triggers>
                         </Button>
-                            <Button
+                            <Button  x:Name="DownloadButton"
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:DiscoveryViewModel}}, Path=DownloadImageCommand}"
                                 CommandParameter="{Binding .}"
                                 ImageSource="download.svg"
@@ -112,7 +121,12 @@
                                 CornerRadius="30"
                                 Padding="12"
                                 InputTransparent="False"
-                                BackgroundColor="{AppThemeBinding Light=White, Dark=#808080}"/>
+                                TextColor="{AppThemeBinding Light=Black, Dark=White}"
+                                BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource OffBlack}}">
+                                <Button.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="{Binding TextColor, Source={x:Reference DownloadButton}}" />
+                                </Button.Behaviors>
+                            </Button>
                         </VerticalStackLayout>
                 </Grid>
             </DataTemplate>
@@ -134,7 +148,11 @@
                     Source="signal.svg"
                     WidthRequest="24"
                     HeightRequest="24"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center">
+                    <Image.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="White" />
+                    </Image.Behaviors>
+                </Image>
                 <Label 
                     Text="Offline - No new cats available"
                     TextColor="White"

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:CatDex.Models"
              xmlns:controls="clr-namespace:CatDex.Controls"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="CatDex.Controls.CatCard"
              x:DataType="models:Cat"
              x:Name="this">
@@ -86,9 +87,13 @@
                             <Button.TextColor>
                                 <AppThemeBinding Light="Black" Dark="White" />
                             </Button.TextColor>
+                            <Button.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{Binding TextColor, Source={x:Reference FavoriteButton}}" />
+                            </Button.Behaviors>
                         </Button>
 
                         <Button
+                            x:Name="DeleteButton"
                             Command="{Binding Source={x:Reference this}, Path=DeleteCommand}"
                             CommandParameter="{Binding .}"
                             WidthRequest="40"
@@ -102,6 +107,9 @@
                             <Button.TextColor>
                                 <AppThemeBinding Light="Black" Dark="White" />
                             </Button.TextColor>
+                            <Button.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="{Binding TextColor, Source={x:Reference DeleteButton}}" />
+                            </Button.Behaviors>
                         </Button>
                     </HorizontalStackLayout>
                 </Grid>

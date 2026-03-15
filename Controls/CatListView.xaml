@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:CatDex.Models"
              xmlns:controls="clr-namespace:CatDex.Controls"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="CatDex.Controls.CatListView"
              x:Name="this">
 
@@ -30,33 +31,43 @@
                     BackgroundColor="{AppThemeBinding Light=White, Dark=Transparent}"
                     StrokeShape="RoundRectangle 6">
                 <HorizontalStackLayout Spacing="2">
-                    <Button Command="{Binding ToggleDisplayModeCommand}"
-                            ImageSource="grid.svg" Style="{StaticResource ToggleIconButton}">
+                    <Button x:Name="GridButton"
+                            Command="{Binding ToggleDisplayModeCommand}"
+                            ImageSource="grid.svg" Style="{StaticResource ToggleIconButton}"
+                            TextColor="{AppThemeBinding Light=Black, Dark=White}">
+                        <Button.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{Binding TextColor, Source={x:Reference GridButton}}" />
+                        </Button.Behaviors>
                         <Button.Triggers>
                             <DataTrigger TargetType="Button"
                                          Binding="{Binding IsListMode}"
                                          Value="False">
-                                <Setter Property="Opacity" Value="0.6"/>
+                                <Setter Property="Opacity" Value="1"/>
                             </DataTrigger>
                             <DataTrigger TargetType="Button"
                                          Binding="{Binding IsListMode}"
                                          Value="True">
-                                <Setter Property="Opacity" Value="0.3"/>
+                                <Setter Property="Opacity" Value="0.5"/>
                             </DataTrigger>
                         </Button.Triggers>
                     </Button>
-                    <Button Command="{Binding ToggleDisplayModeCommand}"
-                            ImageSource="list.svg" Style="{StaticResource ToggleIconButton}">
+                    <Button x:Name="ListButton"
+                            Command="{Binding ToggleDisplayModeCommand}"
+                            ImageSource="list.svg" Style="{StaticResource ToggleIconButton}"
+                            TextColor="{AppThemeBinding Light=Black, Dark=White}">
+                        <Button.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="{Binding TextColor, Source={x:Reference ListButton}}" />
+                        </Button.Behaviors>
                         <Button.Triggers>
                             <DataTrigger TargetType="Button"
                                          Binding="{Binding IsListMode}"
                                          Value="True">
-                                <Setter Property="Opacity" Value="0.6"/>
+                                <Setter Property="Opacity" Value="1"/>
                             </DataTrigger>
                             <DataTrigger TargetType="Button"
                                          Binding="{Binding IsListMode}"
                                          Value="False">
-                                <Setter Property="Opacity" Value="0.3"/>
+                                <Setter Property="Opacity" Value="0.5"/>
                             </DataTrigger>
                         </Button.Triggers>
                     </Button>

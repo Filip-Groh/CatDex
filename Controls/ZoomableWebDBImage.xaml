@@ -20,10 +20,8 @@
                Padding="15,8"
                CornerRadius="25"
                HasShadow="False"
-               InputTransparent="False">
-            <Frame.BackgroundColor>
-                <AppThemeBinding Light="White" Dark="#808080" />
-            </Frame.BackgroundColor>
+               InputTransparent="False"
+               BackgroundColor="{AppThemeBinding Light=White, Dark={StaticResource OffBlack}}">
             <Slider x:Name="ZoomSlider"
                     Minimum="1"
                     Maximum="4"
