@@ -1,5 +1,7 @@
 # CatDex
 
+**WARNING** Sometimes the app throws "Process isn't responing", but the app works fine just the error popup keeps appearing.
+
 CatDex is a cross-platform mobile app built with .NET MAUI that lets you discover, save, and manage information about cats and cat breeds.
 
 ## Features
